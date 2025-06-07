@@ -14,13 +14,90 @@ typedef struct Buffer {
 
 typedef struct cp_info {
     u1 tag;
-    u1 * info;
+    union {
+        struct {
+            u2 name_index;
+        } Class;
+        struct {
+            u2 class_index;
+            u2 name_and_type_index;
+        } Fieldref;
+        struct {
+            u2 class_index;
+            u2 name_and_type_index;
+        } Methodref;
+        struct {
+            u2 class_index;
+            u2 name_and_type_index;
+        } InterfaceMethodref;
+        struct {
+            u2 name_index;
+            u2 descriptor_index;
+        } NameAndType;
+        struct {
+            u2 length;
+            u1 * bytes;
+        } Utf8;
+        struct {
+            u2 string_index;
+        } String;
+        struct {
+            u4 bytes;
+        } Integer;
+        struct {
+            u4 bytes;
+        } Float;
+        struct {
+            u4 high_bytes;
+            u4 low_bytes;
+        } Long;
+        struct {
+            u4 high_bytes;
+            u4 low_bytes;
+        } Double;
+    };
 } cp_info;
+
+typedef struct exception_table {
+    u2 start_pc;
+    u2 end_pc;
+    u2 handler_pc;
+    u2 catch_type;
+} exception_table;
+
+typedef struct classes {
+    u2 inner_class_info_index;
+    u2 outer_class_info_index;
+    u2 inner_name_index;
+    u2 inner_class_access_flags;
+} classes;
 
 typedef struct attribute_info {
     u2 attribute_name_index;
     u4 attribute_length;
-    u1 * info;
+    union {
+        struct {
+            u2 constantvalue_index;
+        } ConstantValue;
+        struct {
+            u2 max_stack;
+            u2 max_locals;
+            u4 code_length;
+            u1 * code;
+            u2 exception_table_length;
+            exception_table * exception_table;
+            u2 attributes_count;
+            attribute_info * attributes;
+        } Code;
+        struct {
+            u2 number_of_exceptions;
+            u2 * exception_index_table;
+        } Exceptions;
+        struct {
+            u2 number_of_classes;
+            classes * classes;
+        } InnerClasses;
+    };
 } attribute_info;
 
 typedef struct field_info {
