@@ -13,10 +13,7 @@ ClassFile * read_class_file() {
     class_file->minor_version = u2read();
     class_file->major_version = u2read();
     class_file->constant_pool_count = u2read();
-    class_file->constant_pool = malloc(sizeof(cp_info *) * (class_file->constant_pool_count - 1));
-    for (u2 i = 0; i < (class_file->constant_pool_count - 1); i++) {
-        class_file->constant_pool[i] = read_cp_info();
-    }
+    class_file->constant_pool = read_constant_pool(class_file->constant_pool_count);
     class_file->access_flags = u2read();
     class_file->this_class = u2read();
     class_file->super_class = u2read();
