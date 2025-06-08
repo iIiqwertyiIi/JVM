@@ -386,3 +386,118 @@ void print_method_info(method_info * * methods, u2 methods_count) {
         printf("Attributes count: %d\n\n", method->attributes_count);
     }
 }
+
+#define CONSTANT_Utf8 1
+
+char *get_utf8_from_constant_pool(cp_info **constant_pool, u2 index) {
+    if (constant_pool == NULL || constant_pool[index] == NULL) {
+        return "NULL";
+    }
+
+    if (constant_pool[index]->tag != CONSTANT_Utf8) {
+        return "TIPO INVÁLIDO";
+    }
+
+    // Aloca uma nova string com terminador nulo
+    u2 length = constant_pool[index]->Utf8.length;
+    char *utf8_string = (char *)malloc(length + 1);
+    if (utf8_string == NULL) {
+        return "ERRO ALOC";
+    }
+
+    memcpy(utf8_string, constant_pool[index]->Utf8.bytes, length);
+    utf8_string[length] = '\0';
+
+    return utf8_string;
+}
+
+typedef enum {
+    ATTR_UNKNOWN,
+    ATTR_CONSTANTVALUE,
+    ATTR_CODE,
+    ATTR_EXCEPTIONS,
+    ATTR_INNERCLASSES
+} AttributeType;
+
+AttributeType get_attribute_type(const char *name) {
+    if (strcmp(name, "ConstantValue") == 0) return ATTR_CONSTANTVALUE;
+    if (strcmp(name, "Code") == 0) return ATTR_CODE;
+    if (strcmp(name, "Exceptions") == 0) return ATTR_EXCEPTIONS;
+    if (strcmp(name, "InnerClasses") == 0) return ATTR_INNERCLASSES;
+    return ATTR_UNKNOWN;
+}
+
+void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_info **constant_pool) {
+    for (int i = 0; i < attribute_count; i++) {
+        attribute_info *attr = attributes[i];
+        if (attr == NULL) {
+            printf("Attribute %d: NULL\n", i);
+            continue;
+        }
+
+        char *attribute_name = get_utf8_from_constant_pool(constant_pool, attr->attribute_name_index);
+        AttributeType type = get_attribute_type(attribute_name);
+
+        printf("\nAttribute %d:\n", i + 1);
+        printf("  attribute_name_index: %d <%s>\n", attr->attribute_name_index, attribute_name);
+        printf("  attribute_length: %u\n", attr->attribute_length);
+
+        switch (type) {
+            case ATTR_CONSTANTVALUE:
+                printf("  ConstantValue:\n");
+                printf("    constantvalue_index: %d\n", attr->ConstantValue.constantvalue_index);
+                break;
+
+            case ATTR_CODE:
+                printf("  Code:\n");
+                printf("    max_stack: %d\n", attr->Code.max_stack);
+                printf("    max_locals: %d\n", attr->Code.max_locals);
+                printf("    code_length: %u\n", attr->Code.code_length);
+                printf("    code:\n");
+                print_code(attr->Code.code, attr->Code.code_length);
+
+                printf("    exception_table_length: %d\n", attr->Code.exception_table_length);
+                for (int j = 0; j < attr->Code.exception_table_length; j++) {
+                    printf("      Exception %d:\n", j + 1);
+                    printf("        start_pc: %d\n", attr->Code.exception_table[j].start_pc);
+                    printf("        end_pc: %d\n", attr->Code.exception_table[j].end_pc);
+                    printf("        handler_pc: %d\n", attr->Code.exception_table[j].handler_pc);
+                    printf("        catch_type: %d\n", attr->Code.exception_table[j].catch_type);
+                }
+
+                printf("    attributes_count: %d\n", attr->Code.attributes_count);
+                print_attribute_info(attr->Code.attributes, attr->Code.attributes_count, constant_pool);
+                break;
+
+            case ATTR_EXCEPTIONS:
+                printf("  Exceptions:\n");
+                printf("    number_of_exceptions: %d\n", attr->Exceptions.number_of_exceptions);
+                for (int j = 0; j < attr->Exceptions.number_of_exceptions; j++) {
+                    printf("    exception_index_table[%d]: %d\n", j, attr->Exceptions.exception_index_table[j]);
+                }
+                break;
+
+            case ATTR_INNERCLASSES:
+                printf("  InnerClasses:\n");
+                printf("    number_of_classes: %d\n", attr->InnerClasses.number_of_classes);
+                for (int j = 0; j < attr->InnerClasses.number_of_classes; j++) {
+                    classes class_info = attr->InnerClasses.classes[j];
+                    printf("    Class %d:\n", j + 1);
+                    printf("      inner_class_info_index: %d\n", class_info.inner_class_info_index);
+                    printf("      outer_class_info_index: %d\n", class_info.outer_class_info_index);
+                    printf("      inner_name_index: %d\n", class_info.inner_name_index);
+                    printf("      inner_class_access_flags: 0x%04X\n", class_info.inner_class_access_flags);
+                    print_inner_classes_access_flags_translation(class_info.inner_class_access_flags);
+                }
+                break;
+
+            case ATTR_UNKNOWN:
+            default:
+                printf("  Unimplemented attribute type: %s\n", attribute_name);
+                break;
+        }
+
+        free(attribute_name);
+    }
+}
+
