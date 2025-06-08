@@ -238,7 +238,7 @@ void print_field_info(field_info * * fields, u2 fields_count) {
             default:
             break;
         }
-        printf("Attributes count: %d", field->attributes_count);
+        printf("Attributes count: %d\n\n", field->attributes_count);
     }
 };
 
@@ -247,4 +247,142 @@ void print_method_info(method_info * * methods, u2 methods_count) {
     ClassFileBuffer * classes = get_class_file_buffer();
     cp_info * * constant = classes->buffer->constant_pool;
     printf("\n====================================================================\nMethods\n");
+    for (int i = 0; i < methods_count; i++) {
+        method_info * method = methods[i];
+        printf("[%d] %s", i, constant[method->name_index - 1]->Utf8.bytes);
+        printf("Name: cp_info#%d <%s>\n", method->name_index, constant[method->name_index - 1]->Utf8.bytes);
+        printf("Descriptor: cp_info#%d <%s>\n", method->descriptor_index, constant[method->descriptor_index - 1]->Utf8.bytes);
+        printf("Access flags: 0x%x", method->access_flags);
+        switch (method->access_flags & 0x000f) {
+            case 0x0001:
+            printf("ACC_PUBLIC\n");
+            break;
+            case 0x0002:
+            printf("ACC_PRIVATE\n");
+            break;
+            case 0x0004:
+            printf("ACC_PROTECTED\n");
+            break;
+            case 0x0008:
+            printf("ACC_STATIC\n");
+            break;
+            case 0x0003:
+            printf("ACC_PUBLIC\nACC_PRIVATE\n");
+            break;
+            case 0x0005:
+            printf("ACC_PUBLIC\nACC_PROTECTED\n");
+            break;
+            case 0x0009:
+            printf("ACC_PUBLIC\nACC_STATIC\n");
+            break;
+            case 0x0006:
+            printf("ACC_PRIVATE\nACC_PROTECTED\n");
+            break;
+            case 0x000a:
+            printf("ACC_PRIVATE\nACC_STATIC\n");
+            break;
+            case 0x000c:
+            printf("ACC_PROTECTED\nACC_STATIC\n");
+            break;
+            case 0x0007:
+            printf("ACC_PUBLIC\nACC_PRIVATE\nACC_PROTECTED\n");
+            break;
+            case 0x000b:
+            printf("ACC_PUBLIC\nACC_PRIVATE\nACC_STATIC\n");
+            break;
+            case 0x000d:
+            printf("ACC_PUBLIC\nACC_PROTECTED\nACC_STATIC\n");
+            break;
+            case 0x000e:
+            printf("ACC_PRIVATE\nACC_PROTECTED\nACC_STATIC\n");
+            break;
+            case 0x000f:
+            printf("ACC_PUBLIC\nACC_PRIVATE\nACC_PROTECTED\nACC_STATIC\n");
+            break;
+            default:
+            break;
+        }
+        switch (method->access_flags & 0x00f0) {
+            case 0x0010:
+            printf("ACC_FINAL\n");
+            break;
+            case 0x0020:
+            printf("ACC_SYNCHRONIZED\n");
+            break;
+            case 0x0040:
+            printf("ACC_BRIDGE\n");
+            break;
+            case 0x0080:
+            printf("ACC_VARARGS\n");
+            break;
+            case 0x0030:
+            printf("ACC_FINAL\nACC_SYNCHRONIZED\n");
+            break;
+            case 0x0050:
+            printf("ACC_FINAL\nACC_BRIDGE\n");
+            break;
+            case 0x0090:
+            printf("ACC_FINAL\nACC_VARARGS\n");
+            break;
+            case 0x0060:
+            printf("ACC_SYNCHRONIZED\nACC_BRIDGE\n");
+            break;
+            case 0x00a0:
+            printf("ACC_SYNCHRONIZED\nACC_VARARGS\n");
+            break;
+            case 0x00c0:
+            printf("ACC_BRIDGE\nACC_VARARGS\n");
+            break;
+            case 0x0070:
+            printf("ACC_FINAL\nACC_SYNCHRONIZED\nACC_BRIDGE\n");
+            break;
+            case 0x00b0:
+            printf("ACC_FINAL\nACC_SYNCHRONIZED\nACC_VARARGS\n");
+            break;
+            case 0x00d0:
+            printf("ACC_FINAL\nACC_BRIDGE\nACC_VARARGS\n");
+            break;
+            case 0x00e0:
+            printf("ACC_SYNCHRONIZED\nACC_BRIDGE\nACC_VARARGS\n");
+            break;
+            case 0x00f0:
+            printf("ACC_FINAL\nACC_SYNCHRONIZED\nACC_BRIDGE\nACC_VARARGS\n");
+            break;
+            default:
+            break;
+        }
+        switch (method->access_flags & 0x0f00) {
+            case 0x0100:
+            printf("ACC_NATIVE\n");
+            break;
+            case 0x0400:
+            printf("ACC_ABSTRACT\n");
+            break;
+            case 0x0800:
+            printf("ACC_STRICT\n");
+            break;
+            case 0x0300:
+            printf("ACC_NATIVE\nACC_ABSTRACT\n");
+            break;
+            case 0x0900:
+            printf("ACC_NATIVE\nACC_STRICT\n");
+            break;
+            case 0x0c00:
+            printf("ACC_ABSTRACT\nACC_STRICT\n");
+            break;
+            case 0x0b00:
+            printf("ACC_NATIVE\nACC_ABSTRACT\nACC_STRICT\n");
+            break;
+            default:
+            break;
+        }
+        switch (method->access_flags & 0xf000) {
+            case 0x1000:
+            printf("ACC_SYNTHETIC\n");
+            break;
+            default:
+            break;
+        }
+        printf("Attributes count: %d\n\n", method->attributes_count);
+    }
 }
