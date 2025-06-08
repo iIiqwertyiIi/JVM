@@ -1,67 +1,129 @@
 #include "attribute_info.h"
+#include "reader.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
-attribute_info * read_attribute_info() {
-    attribute_info * attribute = malloc(sizeof(attribute_info));
+// --- Protótipo da Função Auxiliar Estática ---
+static attribute_info** read_nested_attributes_array(u2 count, cp_info** constant_pool);
 
-    attribute->attribute_name_index = u2read();
-    attribute->attribute_length = u4read();
-     
-    ClassFileBuffer * current_class_file = get_current_class_file();
-    cp_info * cp = current_class_file->buffer[class_file->size - 1]->constant_pool[attribute->attribute_name_index - 1];
-    if(cp.tag == 1) {
-       char* name_cp = cp->Utf8.bytes;
-       if(strcmp(name_cp, "ConstantValue") == 0) {
-            attribute->ConstantValue.constantvalue_index = u2read();
-       }
-       else if(strcmp(name_cp, "Code") == 0) {
-            attribute->Code.max_stack = u2read();
-            attribute->Code.max_locals = u2read();
-            attribute->Code.code_length = u4read();
 
-            attribute->Code.code = malloc(attribute->Code.code_length);
-            for(u4 k = 0; k < attribute->Code.code_length; k++) {
-                attribute->Code.code[k] = u1read();
-            }
+// --- Implementação da Interface Pública ---
 
-            attribute->Code.exception_table_length = u2read();
-            if (attribute->Code.exception_table_length > 0) {
-                attribute->Code.exception_table = malloc(sizeof(exception_table) * attribute->Code.exception_table_length);
-                for(u2 k = 0; k < attribute->Code.exception_table_length; k++) {
-                    attribute->Code.exception_table[k].start_pc = u2read();
-                    attribute->Code.exception_table[k].end_pc = u2read();
-                    attribute->Code.exception_table[k].handler_pc = u2read();
-                    attribute->Code.exception_table[k].catch_type = u2read();
-                }
-            } else {
-                attribute->Code.exception_table = NULL;
-            }
-             attribute->Code.attributes_count = u2read();
-            attribute->Code.attributes = read_attributes(attribute->Code.attributes_count, constant_pool);
-       }
-       else if(strcmp(name_cp, "Exceptions") == 0) {
-            attribute->Exceptions.exception_index_table = u2read();
-              if (attribute->Exceptions.number_of_exceptions > 0) {
-                 attribute->Exceptions.exception_index_table = malloc(sizeof(u2) * attribute->Exceptions.number_of_exceptions);
-                 for (u2 k = 0; k < attribute->Exceptions.number_of_exceptions; k++) {
-                     attribute->Exceptions.exception_index_table[k] = u2read();
-                 }
-            } else {
-                attribute->Exceptions.exception_index_table = NULL;
-            }
-       }
-       else if(strcmp(name_cp, "InnerClasses") == 0) {
-            attribute->InnerClasses.number_of_classes = u2read();
-              if (attribute->InnerClasses.number_of_classes > 0) {
-                 attribute->InnerClasses.classes = malloc(sizeof(classes) * attribute->InnerClasses.number_of_classes);
-                 for (u2 k = 0; k < attribute->InnerClasses.number_of_classes; k++) {
-                    attribute->InnerClasses.classes[k].inner_class_info_index = u2read();
-                    attribute->InnerClasses.classes[k].outer_class_info_index = u2read();
-                    attribute->InnerClasses.classes[k].inner_name_index = u2read();
-                    attribute->InnerClasses.classes[k].inner_class_access_flags = u2read();
-                 }
-            } else {
-                 attribute->InnerClasses.classes = NULL;
-            }
-       }
+attribute_info* read_attribute_info(cp_info** constant_pool) {
+    attribute_info* attr = (attribute_info*)malloc(sizeof(attribute_info));
+    if (!attr) {
+        fprintf(stderr, "ERRO: Falha na alocação de memória para o atributo.\n");
+        exit(1);
     }
+
+    attr->attribute_name_index = u2read();
+    attr->attribute_length = u4read();
+    
+    cp_info* name_info = constant_pool[attr->attribute_name_index - 1];
+    
+
+    if (name_info == NULL || name_info->tag != 1 /* CONSTANT_Utf8 */) {
+        fprintf(stderr, "AVISO: Nome de atributo inválido no índice #%u. Pulando %u bytes.\n", attr->attribute_name_index, attr->attribute_length);
+        get_buffer()->position += attr->attribute_length;
+        free(attr);
+        return NULL; 
+    }
+
+
+    char* attr_name = (char*)name_info->Utf8.bytes;
+
+    if (strcmp(attr_name, "Code") == 0) {
+        attr->Code.max_stack = u2read();
+        attr->Code.max_locals = u2read();
+        
+        attr->Code.code_length = u4read();
+        attr->Code.code = (u1*)malloc(attr->Code.code_length);
+        for(u4 i = 0; i < attr->Code.code_length; i++) {
+            attr->Code.code[i] = u1read();
+        }
+
+        attr->Code.exception_table_length = u2read();
+        if (attr->Code.exception_table_length > 0) {
+            attr->Code.exception_table = (exception_table*)malloc(sizeof(exception_table) * attr->Code.exception_table_length);
+            for(u2 i = 0; i < attr->Code.exception_table_length; i++) {
+                attr->Code.exception_table[i].start_pc   = u2read();
+                attr->Code.exception_table[i].end_pc     = u2read();
+                attr->Code.exception_table[i].handler_pc = u2read();
+                attr->Code.exception_table[i].catch_type = u2read();
+            }
+        } else {
+            attr->Code.exception_table = NULL;
+        }
+        
+        attr->Code.attributes_count = u2read();
+        attr->Code.attributes = read_nested_attributes_array(attr->Code.attributes_count, constant_pool);
+
+    } else if (strcmp(attr_name, "ConstantValue") == 0) {
+        attr->ConstantValue.constantvalue_index = u2read();
+    } else if (strcmp(attr_name, "Exceptions") == 0) {
+        attr->Exceptions.number_of_exceptions = u2read();
+        attr->Exceptions.exception_index_table = (u2*)malloc(sizeof(u2) * attr->Exceptions.number_of_exceptions);
+        for(u2 i = 0; i < attr->Exceptions.number_of_exceptions; i++) {
+            attr->Exceptions.exception_index_table[i] = u2read();
+        }
+    } else if (strcmp(attr_name, "InnerClasses") == 0) {
+        attr->InnerClasses.number_of_classes = u2read();
+        attr->InnerClasses.classes = (classes*)malloc(sizeof(classes) * attr->InnerClasses.number_of_classes);
+        for(u2 i = 0; i < attr->InnerClasses.number_of_classes; i++) {
+            attr->InnerClasses.classes[i].inner_class_info_index = u2read();
+            attr->InnerClasses.classes[i].outer_class_info_index = u2read();
+            attr->InnerClasses.classes[i].inner_name_index = u2read();
+            attr->InnerClasses.classes[i].inner_class_access_flags = u2read();
+        }
+    } else {
+        get_buffer()->position += attr->attribute_length;
+    }
+
+    return attr;
+}
+
+
+void free_attribute_info(attribute_info* attribute, cp_info** constant_pool) {
+    if (!attribute) return;
+
+    cp_info* name_info = constant_pool[attribute->attribute_name_index - 1];
+    
+    if (name_info != NULL && name_info->tag == 1) {
+        char* attr_name = (char*)name_info->Utf8.bytes;
+
+        if (strcmp(attr_name, "Code") == 0) {
+            free(attribute->Code.code);
+            free(attribute->Code.exception_table);
+            
+            if (attribute->Code.attributes) {
+                for (u2 i = 0; i < attribute->Code.attributes_count; i++) {
+                    free_attribute_info(attribute->Code.attributes[i], constant_pool);
+                }
+                free(attribute->Code.attributes);
+            }
+        } else if (strcmp(attr_name, "Exceptions") == 0) {
+            free(attribute->Exceptions.exception_index_table);
+        } else if (strcmp(attr_name, "InnerClasses") == 0) {
+            free(attribute->InnerClasses.classes);
+        }
+    }
+
+    free(attribute);
+}
+
+static attribute_info** read_nested_attributes_array(u2 count, cp_info** constant_pool) {
+    if (count == 0) {
+        return NULL;
+    }
+    attribute_info** attributes_array = (attribute_info**)malloc(sizeof(attribute_info*) * count);
+    if (!attributes_array) {
+        fprintf(stderr, "ERRO: Falha na alocação de memória para o array de atributos aninhados.\n");
+        exit(1);
+    }
+
+    for (u2 i = 0; i < count; i++) {
+        attributes_array[i] = read_attribute_info(constant_pool);
+    }
+    return attributes_array;
 }
