@@ -1,10 +1,11 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
+#include "helper.h"
 #include "types.h"
 
 void print_class_file(ClassFile * class_file);
-void print_cp_info(cp_info * cp_info);
-void print_field_info(field_info * field_info);
+void print_cp_info(cp_info * * cp_info, u2 constant_pool_count);
+void print_field_info(field_info * * field_info, u2 fields_count);
 void print_method_info(method_info * method_info);
 void print_attribute_info(attribute_info * attribute_info);
 

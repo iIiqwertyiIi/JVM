@@ -20,6 +20,9 @@ void print_class_file(ClassFile * class_file) {
         case 0x0020:
         printf("ACC_SUPER\n");
         break;
+        case 0x0030:
+        printf("ACC_FINAL\nACC_SUPER\n");
+        break;
         default:
         break;
     }
@@ -29,6 +32,9 @@ void print_class_file(ClassFile * class_file) {
         break;
         case 0x0400:
         printf("ACC_ABSTRACT\n");
+        break;
+        case 0x0600:
+        printf("ACC_INTERFACE\nACC_ABSTRACT\n");
         break;
         default:
         break;
@@ -43,6 +49,16 @@ void print_class_file(ClassFile * class_file) {
         case 0x4000:
         printf("ACC_ENUM\n");
         break;
+        case 0x3000:
+        printf("ACC_SYNTHETIC\nACC_ANNOTATION\n");
+        break;
+        case 0x5000:
+        printf("ACC_SYNTHETIC\nACC_ENUM\n");
+        break;
+        case 0x6000:
+        printf("ACC_ANNOTATION\nACC_ENUM\n");
+        case 0x7000:
+        printf("ACC_SYNTHETIC\nACC_ANNOTATION\nACC_ENUM\n");
         default:
         break;
     }
@@ -101,14 +117,26 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
             case 4:
             printf("[%d] CONSTANT_Float_info\n", i + 1);
             printf("Bytes: 0x%x\n", constant->Float.bytes);
-            printf("Float: %d\n\n", (float) constant->Float.bytes);
+            printf("Float: %f\n\n", (float) constant->Float.bytes);
             break;
             case 5:
             printf("[%d] CONSTANT_Long_info\n", i + 1);
             printf("High Bytes: 0x%x\n", constant->Long.high_bytes);
             printf("Low Bytes: 0x%x\n", constant->Long.low_bytes);
-            printf("Long: %d\n\n", (int64_t) (constant->Long.high_bytes << 32 | constant->Long.low_bytes));
+            printf("Long: %ld\n\n", (u8) constant->Long.high_bytes << 32 | constant->Long.low_bytes);
+            break;
+            case 6:
+            printf("[%d] CONSTANT_Double_info\n", i + 1);
+            printf("High Bytes: 0x%x\n", constant->Double.high_bytes);
+            printf("Low Bytes: 0x%x\n", constant->Double.low_bytes);
+            printf("Double: %lf\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
             break;
         }
     }
 }
+
+void print_field_info(field_info * * field_info, u2 fields_count) {
+    int count = 0;
+    printf("\n====================================================================\n\n");
+    
+};
