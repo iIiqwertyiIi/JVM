@@ -135,4 +135,8 @@ typedef struct ClassFile {
     attribute_info * * attributes;
 } ClassFile;
 
+typedef struct ClassFileBuffer {
+    ClassFile * buffer;
+} ClassFileBuffer;
+
 #endif

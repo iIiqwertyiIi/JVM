@@ -2,6 +2,8 @@
 
 ClassFile * read_class_file() {
     ClassFile * class_file = malloc(sizeof(ClassFile));
+    ClassFileBuffer * class_buffer = get_current_class_file();
+    class_buffer->buffer = class_file;
     class_file->magic = u4read();
     if (class_file->magic != 0xCAFEBABE){
         fprintf(stderr, "Magic incompatível com .class: %x\n", class_file->magic);
@@ -41,3 +43,7 @@ ClassFile * read_class_file() {
     return class_file;
 }
 
+ClassFileBuffer * get_current_class_file() {
+    static ClassFileBuffer class_file;
+    return &class_file;
+}

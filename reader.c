@@ -47,3 +47,11 @@ u4 u4read() {
     buffer->position += 4;
     return value;
 }
+
+void free_buffer() {
+    Buffer * buffer = get_buffer();
+    if (buffer->buffer != NULL) {
+        free(buffer->buffer);
+        buffer->buffer = NULL;
+    }
+}
