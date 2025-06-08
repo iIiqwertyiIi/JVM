@@ -3,7 +3,7 @@
 #include "types.h"
 #include "reader.h"
 #include "cp_info.h"
-#include "field_info.h"
+#include "field_reader.h"
 #include "method_info.h"
 #include "constant_pool.h"
 
