@@ -4,4 +4,7 @@
 
 field_info * read_field_info();
 
+void free_all_fields(field_info ** fields, u2 fields_count);
+
+
 #endif

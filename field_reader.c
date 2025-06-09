@@ -58,3 +58,23 @@ field_info ** read_all_fields(u2 fields_count) {
     
     return fields;
 }
+void free_all_fields(field_info ** fields, u2 fields_count) {
+    if (fields == NULL) {
+        return;
+    }
+    
+    // Libera cada field
+    for (u2 i = 0; i < fields_count; i++) {
+        if (fields[i] != NULL) {
+            // Libera os atributos se existirem
+            if (fields[i]->attributes != NULL) {
+                free(fields[i]->attributes);
+            }
+            // Libera o field
+            free(fields[i]);
+        }
+    }
+    
+    // Libera o array de ponteiros
+    free(fields);
+}
