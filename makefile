@@ -16,6 +16,7 @@ SRCS = reader.c \
        attribute_info.c \
        output.c \
        class_file.c \
+	   main.c \
 
 # Arquivos objeto
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o)
@@ -82,6 +83,11 @@ $(OBJ_DIR)/output.o: output.c output.h types.h
 $(OBJ_DIR)/class_file.o: class_file.c class_file.h types.h reader.h constant_pool.h field_reader.h method_info.h attribute_info.h
 	@echo "Compilando class_file.c..."
 	@$(CC) $(CFLAGS) -c class_file.c -o $@
+	
+$(OBJ_DIR)/main.o: main.c reader.h class_file.h output.h
+	@echo "Compilando main.c..."
+	@$(CC) $(CFLAGS) -c main.c -o $@
+
 
 
 # Limpeza
