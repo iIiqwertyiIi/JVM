@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 void print_class_file(ClassFile * class_file) {
+    printf("Entrando em print_class_file...\n");
     printf("Assinatura: 0x%x\n", class_file->magic);
     printf("General Information\n");
     printf("Minor version: %d\n", class_file->minor_version);

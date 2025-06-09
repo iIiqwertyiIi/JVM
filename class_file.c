@@ -11,9 +11,14 @@ ClassFileBuffer * get_class_file_buffer() {
 }
 
 ClassFile * read_class_file() {
+    printf("Lendo arquivo..... \n");
     ClassFile * class_file = malloc(sizeof(ClassFile));
     ClassFileBuffer * class_buffer = get_class_file_buffer();
     class_buffer->buffer = class_file;
+    if (class_file == NULL) {
+        printf("Erro: classe não carregada.\n");
+        return NULL;
+    } 
     class_file->magic = u4read();
     if (class_file->magic != 0xCAFEBABE){
         fprintf(stderr, "Magic incompatível com .class: %x\n", class_file->magic);
