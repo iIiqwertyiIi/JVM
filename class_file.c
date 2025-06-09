@@ -5,9 +5,14 @@
 #include "method_info.h"
 #include "constant_pool.h"
 
+ClassFileBuffer * get_class_file_buffer() {
+    static ClassFileBuffer class_file;
+    return &class_file;
+}
+
 ClassFile * read_class_file() {
     ClassFile * class_file = malloc(sizeof(ClassFile));
-    ClassFileBuffer * class_buffer = get_current_class_file();
+    ClassFileBuffer * class_buffer = get_class_file_buffer();
     class_buffer->buffer = class_file;
     class_file->magic = u4read();
     if (class_file->magic != 0xCAFEBABE){
@@ -29,9 +34,7 @@ ClassFile * read_class_file() {
     }
     class_file->fields_count = u2read();
     class_file->fields = malloc(sizeof(field_info *) * class_file->fields_count);
-    for (u2 i = 0; i < class_file->fields_count; i++) {
-        class_file->fields[i] = read_field_info();
-    }
+    class_file->fields = read_all_fields(class_file->fields_count);
     class_file->methods_count = u2read();
     class_file->methods = malloc(sizeof(method_info *) * class_file->methods_count);
     for (u2 i = 0; i < class_file->methods_count; i++) {
@@ -45,10 +48,6 @@ ClassFile * read_class_file() {
     return class_file;
 }
 
-ClassFileBuffer * get_current_class_file() {
-    static ClassFileBuffer class_file;
-    return &class_file;
-}
 
 
 void free_class_file(ClassFile* cf) {
@@ -56,9 +55,7 @@ void free_class_file(ClassFile* cf) {
 
     // 1. Liberta os campos e seus atributos
     if (cf->fields) {
-        for (u2 i = 0; i < cf->fields_count; i++) {
-            free_field_info(cf->fields[i], cf->constant_pool);
-        }
+        free_all_fields(cf->fields, cf->fields_count);
         free(cf->fields);
     }
 

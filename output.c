@@ -388,7 +388,7 @@ void print_method_info(method_info * * methods, u2 methods_count) {
         printf("Attributes count: %d\n\n", method->attributes_count);
     }
 }
-
+/*
 #define CONSTANT_Utf8 1
 
 char *get_utf8_from_constant_pool(cp_info **constant_pool, u2 index) {
@@ -542,3 +542,4 @@ void print_code(u1* code, u4 code_length, cp_info** constant_pool) {
         }
     }
 }
+*/

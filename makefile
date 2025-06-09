@@ -16,7 +16,6 @@ SRCS = reader.c \
        attribute_info.c \
        output.c \
        class_file.c \
-       class_viewer.c
 
 # Arquivos objeto
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o)
@@ -76,7 +75,7 @@ $(OBJ_DIR)/attribute_info.o: attribute_info.c attribute_info.h types.h reader.h
 
 
 
-$(OBJ_DIR)/output.o: output.c output.h types.h bytecode.h
+$(OBJ_DIR)/output.o: output.c output.h types.h
 	@echo "Compilando output.c..."
 	@$(CC) $(CFLAGS) -c output.c -o $@
 
@@ -84,9 +83,6 @@ $(OBJ_DIR)/class_file.o: class_file.c class_file.h types.h reader.h constant_poo
 	@echo "Compilando class_file.c..."
 	@$(CC) $(CFLAGS) -c class_file.c -o $@
 
-$(OBJ_DIR)/class_viewer.o: class_viewer.c types.h reader.h class_file.h constant_pool.h field_reader.h method_info.h output.h
-	@echo "Compilando class_viewer.c..."
-	@$(CC) $(CFLAGS) -c class_viewer.c -o $@
 
 # Limpeza
 clean:
