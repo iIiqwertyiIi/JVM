@@ -7,6 +7,9 @@ typedef uint16_t u2;
 typedef uint32_t u4;
 typedef uint64_t u8;
 
+typedef struct Instruction Instruction;
+typedef struct Attribute Attribute;
+typedef struct Frame Frame;
 typedef struct Buffer {
     u1 * buffer;
     u8 position;
@@ -138,5 +141,17 @@ typedef struct ClassFile {
 typedef struct ClassFileBuffer {
     ClassFile * buffer;
 } ClassFileBuffer;
+
+typedef struct InstructionType {
+  uint8_t opcode;
+  uint8_t operand_count;
+  char * mnemonic;
+  int (*opcode_function) (Frame * frame, Instruction instruction);
+} InstructionType;
+
+struct Instruction {
+  InstructionType * type;
+  uint8_t * operands;
+};
 
 #endif

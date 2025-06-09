@@ -5,6 +5,11 @@ Buffer * get_buffer() {
     return &buffer;
 }
 
+Buffer * get_code_buffer() {
+  static Buffer code_buffer;
+  return &code_buffer;
+}
+
 void read_file(char * filename) {
     Buffer * buffer = get_buffer();
     if (buffer->buffer != NULL) {
