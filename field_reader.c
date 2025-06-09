@@ -1,4 +1,5 @@
 #include "field_reader.h"
+#include "attribute_info.h"
 #include <stdlib.h>
 
 // Função auxiliar para ler atributos de um field
@@ -57,4 +58,19 @@ field_info ** read_all_fields(u2 fields_count) {
     }
     
     return fields;
+
+
+}
+
+void free_field_info(field_info* field, cp_info** constant_pool) {
+    if (!field) return;
+
+    if (field->attributes) {
+        for (u2 i = 0; i < field->attributes_count; i++) {
+            free_attribute_info(field->attributes[i], constant_pool);
+        }
+        free(field->attributes);
+    }
+
+    free(field);
 }
