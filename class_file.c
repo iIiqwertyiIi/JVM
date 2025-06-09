@@ -40,7 +40,7 @@ ClassFile * read_class_file() {
     class_file->attributes_count = u2read();
     class_file->attributes = malloc(sizeof(attribute_info *) * class_file->attributes_count);
     for (u2 i = 0; i < class_file->attributes_count; i++) {
-        class_file->attributes[i] = read_attribute_info();
+        class_file->attributes[i] = read_attribute_info(class_file->constant_pool);
     }
     return class_file;
 }

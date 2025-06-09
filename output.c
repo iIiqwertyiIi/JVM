@@ -416,7 +416,9 @@ typedef enum {
     ATTR_CONSTANTVALUE,
     ATTR_CODE,
     ATTR_EXCEPTIONS,
-    ATTR_INNERCLASSES
+    ATTR_INNERCLASSES,
+    ATTR_SOURCEFILE,
+    ATTR_LINENUMBERTABLE
 } AttributeType;
 
 AttributeType get_attribute_type(const char *name) {
@@ -424,146 +426,117 @@ AttributeType get_attribute_type(const char *name) {
     if (strcmp(name, "Code") == 0) return ATTR_CODE;
     if (strcmp(name, "Exceptions") == 0) return ATTR_EXCEPTIONS;
     if (strcmp(name, "InnerClasses") == 0) return ATTR_INNERCLASSES;
+    if (strcmp(name, "SourceFile") == 0) return ATTR_SOURCEFILE;
+    if (strcmp(name, "LineNumberTable") == 0) return ATTR_LINENUMBERTABLE;
     return ATTR_UNKNOWN;
 }
 
-void print_attribute_info(attribute_info **attributes, u2 attribute_count) {
-    ClassFileBuffer * classes_buffer = get_class_file_buffer();
-    cp_info * * constant_pool = classes_buffer->buffer->constant_pool;
-    printf("\n====================================================================\nAttributes\n");
+
+// A função principal que exibe todos os atributos
+void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_info** constant_pool) {
+    if (attribute_count == 0) return;
+    
+    printf("\n    Attributes:\n");
     for (int i = 0; i < attribute_count; i++) {
         attribute_info *attr = attributes[i];
-        if (attr == NULL) {
-            printf("Attribute %d: NULL\n", i);
-            continue;
-        }
+        if (attr == NULL) continue;
 
-        char *attribute_name = get_utf8_from_constant_pool(constant_pool, attr->attribute_name_index);
+        // É mais seguro usar uma função auxiliar que copia a string
+        char *attribute_name = (char*)constant_pool[attr->attribute_name_index - 1]->Utf8.bytes;
         AttributeType type = get_attribute_type(attribute_name);
 
-        printf("[%d] %s\n", i, attribute_name);
-        printf("Attribute name index: %d <%s>\n", attr->attribute_name_index, attribute_name);
-        printf("Attribute length: %d\n", attr->attribute_length);
+        printf("      [%d] %s\n", i, attribute_name);
+        printf("        - Attribute name index: cp_info #%u\n", attr->attribute_name_index);
+        printf("        - Attribute length: %u\n", attr->attribute_length);
 
         switch (type) {
             case ATTR_CONSTANTVALUE:
-                printf("Constant value index: %d\n", attr->ConstantValue.constantvalue_index);
+                printf("        - Constant value index: cp_info #%u\n", attr->ConstantValue.constantvalue_index);
                 break;
 
             case ATTR_CODE:
-                printf("Maximum stack size: %d\n", attr->Code.max_stack);
-                printf("Maximum local variables: %d\n", attr->Code.max_locals);
-                printf("Code length: %d\n", attr->Code.code_length);
-                print_code(attr->Code.code, attr->Code.code_length);
+                printf("        Code Attribute:\n");
+                printf("          - Maximum stack size: %u\n", attr->Code.max_stack);
+                printf("          - Maximum local variables: %u\n", attr->Code.max_locals);
+                printf("          - Code length: %u\n", attr->Code.code_length);
+                print_code(attr->Code.code, attr->Code.code_length, constant_pool);
 
-                printf("exception_table_length: %d\n", attr->Code.exception_table_length);
-                for (int j = 0; j < attr->Code.exception_table_length; j++) {
-                    printf("Exception %d:\n", j);
-                    printf("Start PC: %d\n", attr->Code.exception_table[j].start_pc);
-                    printf("End PC: %d\n", attr->Code.exception_table[j].end_pc);
-                    printf("Handler PC: %d\n", attr->Code.exception_table[j].handler_pc);
-                    printf("Catch Type: %d\n", attr->Code.exception_table[j].catch_type);
+                if (attr->Code.exception_table_length > 0) {
+                    printf("          Exception table:\n");
+                    for (int j = 0; j < attr->Code.exception_table_length; j++) {
+                        printf("            - Exception %d: from %u to %u, target %u, type ", 
+                               j,
+                               attr->Code.exception_table[j].start_pc,
+                               attr->Code.exception_table[j].end_pc,
+                               attr->Code.exception_table[j].handler_pc);
+                        if(attr->Code.exception_table[j].catch_type == 0) {
+                            printf("any\n");
+                        } else {
+                            printf("cp_info #%u\n", attr->Code.exception_table[j].catch_type);
+                        }
+                    }
                 }
-
-                printf("Attributes count: %d\n", attr->Code.attributes_count);
-                print_attribute_info(attr->Code.attributes, attr->Code.attributes_count);
+                
+                // Chamada recursiva para exibir os atributos aninhados (ex: LineNumberTable)
+                if (attr->Code.attributes_count > 0) {
+                    print_attribute_info(attr->Code.attributes, attr->Code.attributes_count, constant_pool);
+                }
                 break;
 
             case ATTR_EXCEPTIONS:
-                printf("Number of exceptions: %d\n", attr->Exceptions.number_of_exceptions);
+                printf("        - Number of exceptions: %u\n", attr->Exceptions.number_of_exceptions);
                 for (int j = 0; j < attr->Exceptions.number_of_exceptions; j++) {
-                    printf("Exception index table [%d]: %d\n", j, attr->Exceptions.exception_index_table[j]);
+                    printf("          - Exception #%d: cp_info #%u\n", j, attr->Exceptions.exception_index_table[j]);
                 }
                 break;
-
+            
             case ATTR_INNERCLASSES:
-                printf("number_of_classes: %d\n", attr->InnerClasses.number_of_classes);
-                for (int j = 0; j < attr->InnerClasses.number_of_classes; j++) {
-                    classes class_info = attr->InnerClasses.classes[j];
-                    printf("Class %d:\n", j);
-                    printf("Inner class info index: %d\n", class_info.inner_class_info_index);
-                    printf("Outer class info index: %d\n", class_info.outer_class_info_index);
-                    printf("Inner name index: %d\n", class_info.inner_name_index);
-                    printf("Inner class access flags: 0x%x\n", class_info.inner_class_access_flags);
-                    switch (class_info.inner_class_access_flags & 0x000f) {
-                        case 0x0001:
-                        printf("ACC_PUBLIC\n");
-                        break;
-                        case 0x0002:
-                        printf("ACC_PRIVATE\n");
-                        break;
-                        case 0x0004:
-                        printf("ACC_PROTECTED\n");
-                        break;
-                        case 0x0008:
-                        printf("ACC_STATIC\n");
-                        break;
-                        case 0x0003:
-                        printf("ACC_PUBLIC\nACC_PRIVATE\n");
-                        break;
-                        case 0x0005:
-                        printf("ACC_PUBLIC\nACC_PROTECTED\n");
-                        break;
-                        case 0x0009:
-                        printf("ACC_PUBLIC\nACC_STATIC\n");
-                        break;
-                        case 0x0006:
-                        printf("ACC_PRIVATE\nACC_PROTECTED\n");
-                        break;
-                        case 0x000a:
-                        printf("ACC_PRIVATE\nACC_STATIC\n");
-                        break;
-                        case 0x000c:
-                        printf("ACC_PROTECTED\nACC_STATIC\n");
-                        break;
-                        case 0x0007:
-                        printf("ACC_PUBLIC\nACC_PRIVATE\nACC_PROTECTED\n");
-                        break;
-                        case 0x000b:
-                        printf("ACC_PUBLIC\nACC_PRIVATE\nACC_STATIC\n");
-                        break;
-                        case 0x000d:
-                        printf("ACC_PUBLIC\nACC_PROTECTED\nACC_STATIC\n");
-                        break;
-                        case 0x000e:
-                        printf("ACC_PRIVATE\nACC_PROTECTED\nACC_STATIC\n");
-                        break;
-                        case 0x000f:
-                        printf("ACC_PUBLIC\nACC_PRIVATE\nACC_PROTECTED\nACC_STATIC\n");
-                        break;
-                        default:
-                        break;
-                    }
-                    switch (class_info.inner_class_access_flags & 0x00f0) {
-                        case 0x0010:
-                        printf("ACC_FINAL\n");
-                        break;
-                        default:
-                        break;
-                    }
-                    switch (class_info.inner_class_access_flags & 0x0f00) {
-                        case 0x0200:
-                        printf("ACC_INTERFACE\n");
-                        break;
-                        case 0x0400:
-                        printf("ACC_ABSTRACT\n");
-                        break;
-                        case 0x0600:
-                        printf("ACC_INTERFACE\nACC_ABSTRACT\n");
-                        break;
-                        default:
-                        break;
-                    }
-                }
+                 printf("        - Number of classes: %u\n", attr->InnerClasses.number_of_classes);
+                 for (int j = 0; j < attr->InnerClasses.number_of_classes; j++) {
+                    classes cls = attr->InnerClasses.classes[j];
+                    printf("          - Inner Class #%d:\n", j);
+                    printf("            - Inner class info:  cp_info #%u\n", cls.inner_class_info_index);
+                    printf("            - Outer class info:  cp_info #%u\n", cls.outer_class_info_index);
+                    printf("            - Inner name:        cp_info #%u\n", cls.inner_name_index);
+                    printf("            - Access flags:      0x%04X\n", cls.inner_class_access_flags);
+                 }
+                 break;
+
+            case ATTR_SOURCEFILE:
+                // Supondo que a estrutura para SourceFile tenha sido adicionada em types.h
+                // printf("        - Source file name index: cp_info #%u\n", attr->SourceFile.sourcefile_index);
                 break;
 
             case ATTR_UNKNOWN:
             default:
-                printf("Unimplemented attribute type: %s\n", attribute_name);
+                printf("        - (Atributo não implementado ou desconhecido)\n");
                 break;
         }
-
-        free(attribute_name);
+        printf("\n");
     }
 }
 
+
+void print_code(u1* code, u4 code_length, cp_info** constant_pool) {
+    printf("          Code:\n");
+    for (u4 i = 0; i < code_length; ) {
+        printf("            %u: ", i);
+        u1 opcode = code[i];
+        switch (opcode) {
+            // Opcodes mais comuns
+            case 0x2a: printf("aload_0\n"); i += 1; break;
+            case 0x2b: printf("aload_1\n"); i += 1; break;
+            case 0xb1: printf("return\n"); i += 1; break;
+            case 0xb2: printf("getstatic #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
+            case 0x12: printf("ldc #%u\n", code[i+1]); i += 2; break;
+            case 0xb6: printf("invokevirtual #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
+            case 0xb7: printf("invokespecial #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
+            
+            // Outros opcodes...
+            default:
+                printf("opcode 0x%02x (não implementado)\n", opcode);
+                i += 1;
+                break;
+        }
+    }
+}

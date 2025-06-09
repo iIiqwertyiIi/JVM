@@ -1,4 +1,5 @@
 #include "field_reader.h"
+#include "attribute_info.h"
 #include <stdlib.h>
 
 // Função auxiliar para ler atributos de um field
