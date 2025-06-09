@@ -2,6 +2,7 @@
 #define OUTPUT_H
 
 #include "types.h"
+#include "class_file.h"
 
 void print_class_file(ClassFile *class_file);
 

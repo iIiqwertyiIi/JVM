@@ -1,7 +1,12 @@
-#ifndef FIELD_INFO_H
-#define FIELD_INFO_H
+#ifndef FIELD_READER_H
+#define FIELD_READER_H
 #include "types.h"
+#include "reader.h"
 
-field_info * read_field_info();
-void free_field_info(field_info* field, cp_info** constant_pool);
+// Função para ler todos os fields
+field_info ** read_all_fields(u2 fields_count);
+
+// Função para liberar a memória dos fields
+void free_all_fields(field_info ** fields, u2 fields_count);
+
 #endif

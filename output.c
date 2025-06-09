@@ -1,6 +1,9 @@
 #include "output.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 void print_class_file(ClassFile * class_file) {
+    printf("Entrando em print_class_file...\n");
     printf("Assinatura: 0x%x\n", class_file->magic);
     printf("General Information\n");
     printf("Minor version: %d\n", class_file->minor_version);
@@ -58,8 +61,10 @@ void print_class_file(ClassFile * class_file) {
         break;
         case 0x6000:
         printf("ACC_ANNOTATION\nACC_ENUM\n");
+        break;
         case 0x7000:
         printf("ACC_SYNTHETIC\nACC_ANNOTATION\nACC_ENUM\n");
+        break;
         default:
         break;
     }
@@ -75,7 +80,7 @@ void print_class_file(ClassFile * class_file) {
 }
 
 void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
-    int count = 1;
+    //int count = 1;
     printf("\n====================================================================\nConstantPool\n");
     for (int i = 0; i < constant_pool_count - 1; i++) {
         cp_info * constant = constant_pool[i];
@@ -134,7 +139,7 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
             printf("[%d] CONSTANT_Double_info\n", i + 1);
             printf("High Bytes: 0x%x\n", constant->Double.high_bytes);
             printf("Low Bytes: 0x%x\n", constant->Double.low_bytes);
-            printf("Double: %lf\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
+            printf("Double: %ld\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
             i++;
             break;
         }
@@ -142,7 +147,7 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
 }
 
 void print_field_info(field_info * * fields, u2 fields_count) {
-    int count = 0;
+    //int count = 0;
     ClassFileBuffer * classes = get_class_file_buffer();
     cp_info * * constant = classes->buffer->constant_pool;
     printf("\n====================================================================\nFields\n");
@@ -232,6 +237,7 @@ void print_field_info(field_info * * fields, u2 fields_count) {
             break;
             case 0x4000:
             printf("ACC_ENUM\n");
+            break;
             case 0x5000:
             printf("ACC_SYNTHETIC\nACC_ENUM\n");
             break;
@@ -243,7 +249,7 @@ void print_field_info(field_info * * fields, u2 fields_count) {
 };
 
 void print_method_info(method_info * * methods, u2 methods_count) {
-    int count = 0;
+    //int count = 0;
     ClassFileBuffer * classes = get_class_file_buffer();
     cp_info * * constant = classes->buffer->constant_pool;
     printf("\n====================================================================\nMethods\n");
@@ -386,7 +392,7 @@ void print_method_info(method_info * * methods, u2 methods_count) {
         printf("Attributes count: %d\n\n", method->attributes_count);
     }
 }
-
+/*
 #define CONSTANT_Utf8 1
 
 char *get_utf8_from_constant_pool(cp_info **constant_pool, u2 index) {
@@ -540,3 +546,4 @@ void print_code(u1* code, u4 code_length, cp_info** constant_pool) {
         }
     }
 }
+*/

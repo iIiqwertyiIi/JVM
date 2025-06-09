@@ -1,4 +1,5 @@
 #include "reader.h"
+#include "output.h"
 
 int main (int argc, char *argv[]) {
   

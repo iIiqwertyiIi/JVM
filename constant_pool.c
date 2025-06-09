@@ -93,3 +93,26 @@ cp_info ** read_constant_pool(u2 constant_pool_count) {
     
     return constant_pool;
 }
+
+void free_constant_pool(u2 constant_pool_count, cp_info ** constant_pool) {
+    if (constant_pool == NULL) {
+        return;
+    }
+
+    // Percorre todas as entradas (constant_pool_count - 1)
+    for (u2 i = 0; i < (constant_pool_count - 1); i++) {
+        if (constant_pool[i] != NULL) {
+            // Se for UTF8, precisa liberar o array de bytes
+            if (constant_pool[i]->tag == CONSTANT_Utf8) {
+                if (constant_pool[i]->Utf8.bytes != NULL) {
+                    free(constant_pool[i]->Utf8.bytes);
+                }
+            }
+            // Libera a estrutura cp_info
+            free(constant_pool[i]);
+        }
+    }
+
+    // Libera o array de ponteiros
+    free(constant_pool);
+}

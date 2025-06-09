@@ -8,7 +8,7 @@
 #include "constant_pool.h"
 
 ClassFile * read_class_file();
-
+ClassFileBuffer * get_class_file_buffer();
 void free_class_file(ClassFile* class_file);
 
 #endif
