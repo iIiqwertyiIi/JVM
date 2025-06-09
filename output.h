@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "helper.h"
 #include "types.h"
+#include "bytecode.h"
 
 void print_class_file(ClassFile * class_file);
 void print_cp_info(cp_info * * cp_info, u2 constant_pool_count);

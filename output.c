@@ -567,3 +567,43 @@ void print_attribute_info(attribute_info **attributes, u2 attribute_count) {
     }
 }
 
+void print_divider() {
+  printf("================================================================================\n");
+}
+
+void print_code(u1 *code, u4 code_length) {
+    Buffer *code_buffer = get_code_buffer();
+    code_buffer->position = 0;
+    code_buffer->buffer = code;
+
+    print_title("Seção de código");
+
+    int i = 0;
+    while (code_buffer->position < code_length) {
+        i++;
+        printf("Instrução: %d\n", i);
+        Instruction instruction = read_instruction();
+        print_instruction(instruction, i);
+
+        if (instruction.type->opcode == 0xc4) {
+            // TODO: Implementar suporte à instrução wide
+        }
+    }
+
+    printf("\n");
+    print_divider();
+    printf("\n");
+}
+
+void print_instruction(Instruction instruction, int i) {
+  printf("Mnemônico: %s\n", instruction.type->mnemonic);
+  if (instruction.type->operand_count > 0) {
+    printf("Operandos: ");
+    for (int i = 0; i < instruction.type->operand_count; i++) {
+      printf("%d ", instruction.operands[i]);
+    }
+    printf("\n");
+  }
+}
+
+
