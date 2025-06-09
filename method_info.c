@@ -6,7 +6,7 @@
 method_info* read_method_info(cp_info** constant_pool) {
     method_info* method = (method_info*)malloc(sizeof(method_info));
     if (!method) {
-        // Tratar erro de alocação de memória
+      
         return NULL;
     }
 
@@ -31,6 +31,7 @@ method_info* read_method_info(cp_info** constant_pool) {
     
     return method;
 }
+
 void free_method_info(method_info* method, cp_info** constant_pool) {
     if (!method) return;
 
@@ -41,6 +42,6 @@ void free_method_info(method_info* method, cp_info** constant_pool) {
         free(method->attributes);
     }
 
+
     free(method);
 }
-
