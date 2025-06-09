@@ -60,8 +60,10 @@ void print_class_file(ClassFile * class_file) {
         break;
         case 0x6000:
         printf("ACC_ANNOTATION\nACC_ENUM\n");
+        break;
         case 0x7000:
         printf("ACC_SYNTHETIC\nACC_ANNOTATION\nACC_ENUM\n");
+        break;
         default:
         break;
     }
@@ -136,7 +138,7 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
             printf("[%d] CONSTANT_Double_info\n", i + 1);
             printf("High Bytes: 0x%x\n", constant->Double.high_bytes);
             printf("Low Bytes: 0x%x\n", constant->Double.low_bytes);
-            printf("Double: %lf\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
+            printf("Double: %ld\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
             i++;
             break;
         }
@@ -234,6 +236,7 @@ void print_field_info(field_info * * fields, u2 fields_count) {
             break;
             case 0x4000:
             printf("ACC_ENUM\n");
+            break;
             case 0x5000:
             printf("ACC_SYNTHETIC\nACC_ENUM\n");
             break;
