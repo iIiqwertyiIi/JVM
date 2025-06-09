@@ -16,7 +16,9 @@
 #define CONSTANT_NameAndType        12
 #define CONSTANT_Utf8               1
 
-// Função para ler o constant pool completo
 cp_info ** read_constant_pool(u2 constant_pool_count);
+
+void free_constant_pool(cp_info ** constant_pool, u2 constant_pool_count);
+
 
 #endif
