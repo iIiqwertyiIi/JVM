@@ -14,8 +14,6 @@ SRCS = reader.c \
        field_reader.c \
        method_info.c \
        attribute_info.c \
-       instructions.c \
-       bytecode.c \
        output.c \
        class_file.c \
        class_viewer.c
@@ -30,8 +28,6 @@ HEADERS = types.h \
           field_reader.h \
           method_info.h \
           attribute_info.h \
-          instructions.h \
-          bytecode.h \
           output.h \
           class_file.h
 
@@ -76,13 +72,9 @@ $(OBJ_DIR)/attribute_info.o: attribute_info.c attribute_info.h types.h reader.h
 	@echo "Compilando attribute_info.c..."
 	@$(CC) $(CFLAGS) -c attribute_info.c -o $@
 
-$(OBJ_DIR)/instructions.o: instructions.c instructions.h types.h
-	@echo "Compilando instructions.c..."
-	@$(CC) $(CFLAGS) -c instructions.c -o $@
 
-$(OBJ_DIR)/bytecode.o: bytecode.c bytecode.h types.h instructions.h
-	@echo "Compilando bytecode.c..."
-	@$(CC) $(CFLAGS) -c bytecode.c -o $@
+
+
 
 $(OBJ_DIR)/output.o: output.c output.h types.h bytecode.h
 	@echo "Compilando output.c..."

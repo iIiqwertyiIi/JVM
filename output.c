@@ -1,4 +1,6 @@
 #include "output.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 void print_class_file(ClassFile * class_file) {
     printf("Assinatura: 0x%x\n", class_file->magic);
