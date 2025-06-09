@@ -12,5 +12,6 @@ u4 u4read();
 void read_file(char * filename);
 
 Buffer * get_buffer();
+void free_buffer();
 
 #endif

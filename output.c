@@ -77,7 +77,7 @@ void print_class_file(ClassFile * class_file) {
 }
 
 void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
-    int count = 1;
+    //int count = 1;
     printf("\n====================================================================\nConstantPool\n");
     for (int i = 0; i < constant_pool_count - 1; i++) {
         cp_info * constant = constant_pool[i];
@@ -144,7 +144,7 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
 }
 
 void print_field_info(field_info * * fields, u2 fields_count) {
-    int count = 0;
+    //int count = 0;
     ClassFileBuffer * classes = get_class_file_buffer();
     cp_info * * constant = classes->buffer->constant_pool;
     printf("\n====================================================================\nFields\n");
@@ -245,7 +245,7 @@ void print_field_info(field_info * * fields, u2 fields_count) {
 };
 
 void print_method_info(method_info * * methods, u2 methods_count) {
-    int count = 0;
+    //int count = 0;
     ClassFileBuffer * classes = get_class_file_buffer();
     cp_info * * constant = classes->buffer->constant_pool;
     printf("\n====================================================================\nMethods\n");
