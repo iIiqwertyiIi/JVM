@@ -87,7 +87,7 @@ typedef struct attribute_info {
             u2 exception_table_length;
             exception_table * exception_table;
             u2 attributes_count;
-            attribute_info * attributes;
+            attribute_info ** attributes;
         } Code;
         struct {
             u2 number_of_exceptions;
@@ -105,7 +105,7 @@ typedef struct field_info {
     u2 name_index;
     u2 descriptor_index;
     u2 attributes_count;
-    attribute_info * attributes;
+    attribute_info ** attributes;
 } field_info;
 
 typedef struct method_info {
@@ -113,7 +113,7 @@ typedef struct method_info {
     u2 name_index;
     u2 descriptor_index;
     u2 attributes_count;
-    attribute_info * attributes;
+    attribute_info ** attributes;
 } method_info;
 
 typedef struct ClassFile {

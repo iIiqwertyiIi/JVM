@@ -1,4 +1,9 @@
 #include "class_file.h"
+#include "attribute_info.h" 
+#include <stdlib.h>
+#include "field_reader.h"
+#include "method_info.h"
+#include "constant_pool.h"
 
 ClassFile * read_class_file() {
     ClassFile * class_file = malloc(sizeof(ClassFile));
@@ -43,4 +48,42 @@ ClassFile * read_class_file() {
 ClassFileBuffer * get_current_class_file() {
     static ClassFileBuffer class_file;
     return &class_file;
+}
+
+
+void free_class_file(ClassFile* cf) {
+    if (!cf) return;
+
+    // 1. Liberta os campos e seus atributos
+    if (cf->fields) {
+        for (u2 i = 0; i < cf->fields_count; i++) {
+            free_field_info(cf->fields[i], cf->constant_pool);
+        }
+        free(cf->fields);
+    }
+
+    // 2. Liberta os métodos e seus atributos
+    if (cf->methods) {
+        for (u2 i = 0; i < cf->methods_count; i++) {
+            free_method_info(cf->methods[i], cf->constant_pool);
+        }
+        free(cf->methods);
+    }
+
+    // 3. Liberta os atributos da própria classe
+    if (cf->attributes) {
+       for (u2 i = 0; i < cf->attributes_count; i++) {
+           free_attribute_info(cf->attributes[i], cf->constant_pool);
+       }
+       free(cf->attributes);
+    }
+    
+    // 4. Liberta arrays simples
+    free(cf->interfaces);
+    
+    // 5. Liberta o Constant Pool
+    free_constant_pool(cf->constant_pool_count, cf->constant_pool);
+    
+    // 6. liberta a estrutura ClassFile principal
+    free(cf);
 }

@@ -1,5 +1,5 @@
 #include "method_info.h"
-
+#include "attribute_info.h"
 
 method_info * read_method_info() {
     method_info * method = malloc(sizeof(method_info));
@@ -12,4 +12,22 @@ method_info * read_method_info() {
     for (u2 i = 0; i < class_file->attributes_count; i++) {
         class_file->attributes[i] = read_attribute_info();
     }
+
+
+
 }
+void free_method_info(method_info* method, cp_info** constant_pool) {
+    if (!method) return;
+
+    // 1. Liberta os atributos dentro deste método
+    if (method->attributes) {
+        for (u2 i = 0; i < method->attributes_count; i++) {
+            free_attribute_info(method->attributes[i], constant_pool);
+        }
+        free(method->attributes);
+    }
+
+    // 2. Liberta a própria estrutura do método
+    free(method);
+}
+

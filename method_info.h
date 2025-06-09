@@ -5,4 +5,5 @@
 
 method_info * read_method_info();
 
+void free_method_info(method_info* method, cp_info** constant_pool);
 #endif
