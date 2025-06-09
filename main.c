@@ -2,8 +2,6 @@
 #include "output.h"
 
 int main (int argc, char *argv[]) {
-
-  printf("MAIN");
   
   if (argc < 2) {
     printf("No file provided\n");
