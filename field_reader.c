@@ -2,23 +2,27 @@
 #include <stdlib.h>
 
 // Função auxiliar para ler atributos de um field
-attribute_info * read_field_attributes(u2 attributes_count) {
+static attribute_info ** read_field_attributes(u2 attributes_count) {
     if (attributes_count == 0) {
         return NULL;
     }
     
-    attribute_info * attributes = malloc(sizeof(attribute_info) * attributes_count);
+    // Aloca array de PONTEIROS para attribute_info
+    attribute_info ** attributes = malloc(sizeof(attribute_info *) * attributes_count);
     
     for (u2 i = 0; i < attributes_count; i++) {
+        // Aloca cada atributo
+        attributes[i] = malloc(sizeof(attribute_info));
+        
         // Lê o nome do atributo (índice no constant pool)
-        attributes[i].attribute_name_index = u2read();
+        attributes[i]->attribute_name_index = u2read();
         
         // Lê o tamanho do atributo
-        attributes[i].attribute_length = u4read();
+        attributes[i]->attribute_length = u4read();
         
         // Por enquanto, apenas pula os bytes do atributo
         // (você pode expandir isso depois para ler atributos específicos)
-        for (u4 j = 0; j < attributes[i].attribute_length; j++) {
+        for (u4 j = 0; j < attributes[i]->attribute_length; j++) {
             u1read();
         }
     }
@@ -57,4 +61,31 @@ field_info ** read_all_fields(u2 fields_count) {
     }
     
     return fields;
+}
+
+// Função para liberar a memória dos fields
+void free_all_fields(field_info ** fields, u2 fields_count) {
+    if (fields == NULL) {
+        return;
+    }
+    
+    // Libera cada field
+    for (u2 i = 0; i < fields_count; i++) {
+        if (fields[i] != NULL) {
+            // Libera os atributos se existirem
+            if (fields[i]->attributes != NULL) {
+                for (u2 j = 0; j < fields[i]->attributes_count; j++) {
+                    if (fields[i]->attributes[j] != NULL) {
+                        free(fields[i]->attributes[j]);
+                    }
+                }
+                free(fields[i]->attributes);
+            }
+            // Libera o field
+            free(fields[i]);
+        }
+    }
+    
+    // Libera o array de ponteiros
+    free(fields);
 }
