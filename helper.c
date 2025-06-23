@@ -11,12 +11,12 @@ union ConverterU8Double converterU8Double;
 
 int8_t u1_to_byte(u1 value) {
   converterU1Byte.u1 = value;
-  return ConverterU1Byte.b;
+  return converterU1Byte.b;
 }
 
-u1 byte_to_u1(int_8_t value) {
+u1 byte_to_u1(int8_t value) {
   converterU1Byte.b = value;
-  return ConverterU1Byte.u1;
+  return converterU1Byte.u1;
 }
 
 int16_t u2_to_short(u2 value) {
@@ -24,7 +24,7 @@ int16_t u2_to_short(u2 value) {
     return converterU2Short.s;
 }
 
-u2 short_to_u2(int_16_t value) {
+u2 short_to_u2(int16_t value) {
     converterU2Short.s = value;
     return converterU2Short.u2;
 }
@@ -40,7 +40,7 @@ u4 int_to_u4(int32_t value) {
 }
 
 float u4_to_float(u4 value) {
-    converterU4Float.u4 = u4;
+    converterU4Float.u4 = value;
     return converterU4Float.f;
 }
 

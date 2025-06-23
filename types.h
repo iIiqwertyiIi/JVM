@@ -139,4 +139,24 @@ typedef struct ClassFileBuffer {
     ClassFile * buffer;
 } ClassFileBuffer;
 
+typedef struct OperandStack {
+    u4 self;
+    OperandStack * next;
+} OperandStack;
+
+typedef struct Frame {
+    ClassFile * this_class;
+    method_info * this_method;
+    OperandStack * stack_top;
+    u4 stack_size;
+    u4 * local_variables;
+    Buffer pc;
+    Frame * next;
+} Frame;
+
+typedef struct FrameStack {
+    u4 stack_size;
+    Frame * top_frame;
+} FrameStack;
+
 #endif

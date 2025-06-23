@@ -36,7 +36,7 @@
 int8_t u1_to_byte(u1 value);
 u1 byte_to_u1(int8_t value);
 int16_t u2_to_short(u2 value);
-u2 short_to_u2(int_16_t value);
+u2 short_to_u2(int16_t value);
 int32_t u4_to_int(u4 value);
 u4 int_to_u4(int32_t value);
 float u4_to_float(u4 value);

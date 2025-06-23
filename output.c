@@ -132,14 +132,14 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
             printf("[%d] CONSTANT_Long_info\n", i + 1);
             printf("High Bytes: 0x%x\n", constant->Long.high_bytes);
             printf("Low Bytes: 0x%x\n", constant->Long.low_bytes);
-            printf("Long: %ld\n\n", (u8) constant->Long.high_bytes << 32 | constant->Long.low_bytes);
+            printf("Long: %lld\n\n", (u8) constant->Long.high_bytes << 32 | constant->Long.low_bytes);
             i++;
             break;
             case 6:
             printf("[%d] CONSTANT_Double_info\n", i + 1);
             printf("High Bytes: 0x%x\n", constant->Double.high_bytes);
             printf("Low Bytes: 0x%x\n", constant->Double.low_bytes);
-            printf("Double: %ld\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
+            printf("Double: %lld\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
             i++;
             break;
         }
