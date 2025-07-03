@@ -13,6 +13,10 @@ int isub(Frame * frame);
 int lsub(Frame * frame);
 int fsub(Frame * frame);
 int dsub(Frame * frame);
+int imul(Frame * frame);
+int lmul(Frame * frame);
+int fmul(Frame * frame);
+int dmul(Frame * frame);
 
 
 
