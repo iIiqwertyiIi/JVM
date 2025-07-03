@@ -21,6 +21,10 @@ int idiv(Frame * frame);
 int ldiv(Frame * frame);
 int fdiv(Frame * frame);
 int ddiv(Frame * frame);
+int irem(Frame * frame);
+int lrem(Frame * frame);
+int frem(Frame * frame);
+int drem(Frame * frame);
 
 
 
