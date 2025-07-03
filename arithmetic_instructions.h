@@ -25,6 +25,10 @@ int irem(Frame * frame);
 int lrem(Frame * frame);
 int frem(Frame * frame);
 int drem(Frame * frame);
+int ineg(Frame * frame);
+int lneg(Frame * frame);
+int fneg(Frame * frame);
+int dneg(Frame * frame);
 
 
 

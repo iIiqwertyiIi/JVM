@@ -290,3 +290,49 @@ int drem(Frame * frame){
 
   return 0;
 }
+
+int ineg(Frame * frame) {
+  u4 value1 = remove_from_stack(frame);
+  int32_t result = - u4_to_int(value1);
+  add_to_stack(frame, int_to_u4(result));
+
+  return 0;
+}
+
+int lneg(Frame * frame) {
+  u8 value1_low = (u8) remove_from_stack(frame);
+  u8 value1_high = (u8) remove_from_stack(frame);
+  u8 value1 = value1_high << 32;
+  value1 |= value1_low;
+  int64_t resultl = - u8_to_long(value1);
+  u8 result = long_to_u8(resultl);
+  u4 result_low = (u4) (result & 0xFFFFFFFF);
+  u4 result_high = (u4) (result >> 32);
+  add_to_stack(frame, result_high);
+  add_to_stack(frame, result_low);
+
+  return 0;
+}
+
+int fneg(Frame * frame) {
+  u4 value1 = remove_from_stack(frame);
+  float result = - u4_to_float(value1);
+  add_to_stack(frame, float_to_u4(result));
+
+  return 0;
+}
+
+int dneg(Frame * frame){
+  u8 value1_low = (u8) remove_from_stack(frame);
+  u8 value1_high = (u8) remove_from_stack(frame);
+  u8 value1 = value1_high << 32;
+  value1 |= value1_low;
+  double resultd = - u8_to_double(value1);
+  u8 result = double_to_u8(resultd);
+  u4 result_low = (u4) (result & 0xFFFFFFFF);
+  u4 result_high = (u4) (result >> 32);
+  add_to_stack(frame, result_high);
+  add_to_stack(frame, result_low);
+
+  return 0;
+}
