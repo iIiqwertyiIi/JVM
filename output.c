@@ -132,14 +132,14 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
             printf("[%d] CONSTANT_Long_info\n", i + 1);
             printf("High Bytes: 0x%x\n", constant->Long.high_bytes);
             printf("Low Bytes: 0x%x\n", constant->Long.low_bytes);
-            printf("Long: %lld\n\n", (u8) constant->Long.high_bytes << 32 | constant->Long.low_bytes);
+            printf("Long: %" PRIu64 "\n", (u8) constant->Long.high_bytes << 32 | constant->Long.low_bytes);
             i++;
             break;
             case 6:
             printf("[%d] CONSTANT_Double_info\n", i + 1);
             printf("High Bytes: 0x%x\n", constant->Double.high_bytes);
             printf("Low Bytes: 0x%x\n", constant->Double.low_bytes);
-            printf("Double: %lld\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
+            printf("Double: %" PRIu64 "\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
             i++;
             break;
         }
@@ -392,8 +392,8 @@ void print_method_info(method_info * * methods, u2 methods_count) {
         printf("Attributes count: %d\n\n", method->attributes_count);
     }
 }
-/*
-#define CONSTANT_Utf8 1
+
+/* #define CONSTANT_Utf8 1
 
 char *get_utf8_from_constant_pool(cp_info **constant_pool, u2 index) {
     if (constant_pool == NULL || constant_pool[index] == NULL) {
@@ -416,7 +416,7 @@ char *get_utf8_from_constant_pool(cp_info **constant_pool, u2 index) {
 
     return utf8_string;
 }
-
+ */
 typedef enum {
     ATTR_UNKNOWN,
     ATTR_CONSTANTVALUE,
@@ -438,7 +438,28 @@ AttributeType get_attribute_type(const char *name) {
 }
 
 
-// A função principal que exibe todos os atributos
+//void print_code(u1* code, u4 code_length, cp_info** constant_pool) {
+void print_code(u1* code, u4 code_length) {
+    printf("          Code:\n");
+    for (u4 i = 0; i < code_length; ) {
+        printf("            %u: ", i);
+        u1 opcode = code[i];
+        switch (opcode) {
+            case 0x2a: printf("aload_0\n"); i += 1; break;
+            case 0x2b: printf("aload_1\n"); i += 1; break;
+            case 0xb1: printf("return\n"); i += 1; break;
+            case 0xb2: printf("getstatic #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
+            case 0x12: printf("ldc #%u\n", code[i+1]); i += 2; break;
+            case 0xb6: printf("invokevirtual #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
+            case 0xb7: printf("invokespecial #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
+            
+            default:
+                printf("opcode 0x%02x (não implementado)\n", opcode);
+                i += 1;
+                break;
+        }
+    }
+}
 void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_info** constant_pool) {
     if (attribute_count == 0) return;
     
@@ -465,7 +486,8 @@ void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_in
                 printf("          - Maximum stack size: %u\n", attr->Code.max_stack);
                 printf("          - Maximum local variables: %u\n", attr->Code.max_locals);
                 printf("          - Code length: %u\n", attr->Code.code_length);
-                print_code(attr->Code.code, attr->Code.code_length, constant_pool);
+                //print_code(attr->Code.code, attr->Code.code_length, constant_pool);
+                print_code(attr->Code.code, attr->Code.code_length);
 
                 if (attr->Code.exception_table_length > 0) {
                     printf("          Exception table:\n");
@@ -523,27 +545,3 @@ void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_in
 }
 
 
-void print_code(u1* code, u4 code_length, cp_info** constant_pool) {
-    printf("          Code:\n");
-    for (u4 i = 0; i < code_length; ) {
-        printf("            %u: ", i);
-        u1 opcode = code[i];
-        switch (opcode) {
-            // Opcodes mais comuns
-            case 0x2a: printf("aload_0\n"); i += 1; break;
-            case 0x2b: printf("aload_1\n"); i += 1; break;
-            case 0xb1: printf("return\n"); i += 1; break;
-            case 0xb2: printf("getstatic #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
-            case 0x12: printf("ldc #%u\n", code[i+1]); i += 2; break;
-            case 0xb6: printf("invokevirtual #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
-            case 0xb7: printf("invokespecial #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
-            
-            // Outros opcodes...
-            default:
-                printf("opcode 0x%02x (não implementado)\n", opcode);
-                i += 1;
-                break;
-        }
-    }
-}
-*/
