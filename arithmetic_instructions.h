@@ -17,7 +17,10 @@ int imul(Frame * frame);
 int lmul(Frame * frame);
 int fmul(Frame * frame);
 int dmul(Frame * frame);
-
+int idiv(Frame * frame);
+int ldiv(Frame * frame);
+int fdiv(Frame * frame);
+int ddiv(Frame * frame);
 
 
 
