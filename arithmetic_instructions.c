@@ -336,3 +336,77 @@ int dneg(Frame * frame){
 
   return 0;
 }
+
+int ishl(Frame * frame) {
+  u4 value2 = remove_from_stack(frame);
+  u4 value1 = remove_from_stack(frame);
+  int32_t result = u4_to_int(value1) << (u4_to_int(value2) & 0x1f);
+  add_to_stack(frame, int_to_u4(result));
+
+  return 0;
+}
+
+int ishr(Frame * frame) {
+  u4 value2 = remove_from_stack(frame);
+  u4 value1 = remove_from_stack(frame);
+  int32_t result = u4_to_int(value1) >> (u4_to_int(value2) & 0x1f);
+  add_to_stack(frame, int_to_u4(result));
+
+  return 0;
+}
+
+int iushr(Frame * frame) {
+  u4 value2 = remove_from_stack(frame);
+  u4 value1 = remove_from_stack(frame);
+  u4 result = value1 >> (u4_to_int(value2) & 0x1f);
+  add_to_stack(frame, result);
+
+  return 0;
+}
+
+int lshl(Frame * frame) {
+  u4 value2 = remove_from_stack(frame);
+  u8 value1_low = (u8) remove_from_stack(frame);
+  u8 value1_high = (u8) remove_from_stack(frame);
+  u8 value1 = value1_high << 32;
+  value1 |= value1_low;
+  int64_t resultl = u8_to_long(value1) << (u4_to_int(value2) & 0x3f);
+  u8 result = long_to_u8(resultl);
+  u4 result_low = (u4) (result & 0xFFFFFFFF);
+  u4 result_high = (u4) (result >> 32);
+  add_to_stack(frame, result_high);
+  add_to_stack(frame, result_low);
+
+  return 0;
+}
+
+int lshr(Frame * frame) {
+  u4 value2 = remove_from_stack(frame);
+  u8 value1_low = (u8) remove_from_stack(frame);
+  u8 value1_high = (u8) remove_from_stack(frame);
+  u8 value1 = value1_high << 32;
+  value1 |= value1_low;
+  int64_t resultl = u8_to_long(value1) >> (u4_to_int(value2) & 0x3f);
+  u8 result = long_to_u8(resultl);
+  u4 result_low = (u4) (result & 0xFFFFFFFF);
+  u4 result_high = (u4) (result >> 32);
+  add_to_stack(frame, result_high);
+  add_to_stack(frame, result_low);
+
+  return 0;
+}
+
+int lushr(Frame * frame) {
+  u4 value2 = remove_from_stack(frame);
+  u8 value1_low = (u8) remove_from_stack(frame);
+  u8 value1_high = (u8) remove_from_stack(frame);
+  u8 value1 = value1_high << 32;
+  value1 |= value1_low;
+  u8 result = value1 >> (u4_to_int(value2) & 0x3f);
+  u4 result_low = (u4) (result & 0xFFFFFFFF);
+  u4 result_high = (u4) (result >> 32);
+  add_to_stack(frame, result_high);
+  add_to_stack(frame, result_low);
+
+  return 0;
+}

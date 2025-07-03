@@ -29,6 +29,12 @@ int ineg(Frame * frame);
 int lneg(Frame * frame);
 int fneg(Frame * frame);
 int dneg(Frame * frame);
+int ishl(Frame * frame);
+int lshl(Frame * frame);
+int ishr(Frame * frame);
+int lshr(Frame * frame);
+int iushr(Frame * frame);
+int lushr(Frame * frame);
 
 
 
