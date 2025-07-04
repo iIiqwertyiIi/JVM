@@ -77,6 +77,7 @@ void print_class_file(ClassFile * class_file) {
     print_cp_info(class_file->constant_pool, class_file->constant_pool_count);
     print_field_info(class_file->fields, class_file->fields_count);
     print_method_info(class_file->methods, class_file->methods_count);
+    print_attribute_info(class_file->attributes, class_file->attributes_count);
 }
 
 void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
@@ -245,6 +246,8 @@ void print_field_info(field_info * * fields, u2 fields_count) {
             break;
         }
         printf("Attributes count: %d\n\n", field->attributes_count);
+        print_attribute_info(field->attributes, field->attributes_count);
+
     }
 };
 
@@ -390,6 +393,8 @@ void print_method_info(method_info * * methods, u2 methods_count) {
             break;
         }
         printf("Attributes count: %d\n\n", method->attributes_count);
+        print_attribute_info(method->attributes, method->attributes_count);
+
     }
 }
 
@@ -460,8 +465,10 @@ void print_code(u1* code, u4 code_length) {
         }
     }
 }
-void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_info** constant_pool) {
+void print_attribute_info(attribute_info **attributes, u2 attribute_count) {
     if (attribute_count == 0) return;
+    ClassFileBuffer * classes_buffer = get_class_file_buffer();
+    cp_info * * constant_pool = classes_buffer->buffer->constant_pool;
     
     printf("\n    Attributes:\n");
     for (int i = 0; i < attribute_count; i++) {
@@ -507,7 +514,7 @@ void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_in
                 
                 // Chamada recursiva para exibir os atributos aninhados (ex: LineNumberTable)
                 if (attr->Code.attributes_count > 0) {
-                    print_attribute_info(attr->Code.attributes, attr->Code.attributes_count, constant_pool);
+                    print_attribute_info(attr->Code.attributes, attr->Code.attributes_count);
                 }
                 break;
 
