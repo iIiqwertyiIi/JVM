@@ -92,17 +92,17 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
             break;
             case 9:
             printf("[%d] CONSTANT_Fieldref_info\n", i + 1);
-            printf("Class name: cp_info#%d %s\n", constant->Fieldref.class_index, constant_pool[constant->Fieldref.class_index - 1]->Utf8.bytes);
+            printf("Class name: cp_info#%d %s\n", constant->Fieldref.class_index, constant_pool[constant_pool[constant->Fieldref.class_index - 1]->Fieldref.class_index - 1]->Utf8.bytes);
             printf("Name and type: cp_info#%d <%s : %s>\n\n", constant->Fieldref.name_and_type_index, constant_pool[constant_pool[constant->Fieldref.name_and_type_index - 1]->NameAndType.name_index - 1]->Utf8.bytes, constant_pool[constant_pool[constant->Fieldref.name_and_type_index - 1]->NameAndType.descriptor_index - 1]->Utf8.bytes);
             break;
             case 10:
             printf("[%d] CONSTANT_Methodref_info\n", i + 1);
-            printf("Class name: cp_info#%d %s\n", constant->Methodref.class_index, constant_pool[constant->Methodref.class_index - 1]->Utf8.bytes);
+            printf("Class name: cp_info#%d %s\n", constant->Methodref.class_index, constant_pool[constant_pool[constant->Methodref.class_index - 1]->Methodref.class_index - 1]->Utf8.bytes);
             printf("Name and type: cp_info#%d <%s : %s>\n\n", constant->Methodref.name_and_type_index, constant_pool[constant_pool[constant->Methodref.name_and_type_index - 1]->NameAndType.name_index - 1]->Utf8.bytes, constant_pool[constant_pool[constant->Methodref.name_and_type_index - 1]->NameAndType.descriptor_index - 1]->Utf8.bytes);
             break;
             case 11:
             printf("[%d] CONSTANT_InterfaceMethodref_info\n", i + 1);
-            printf("Class name: cp_info#%d %s\n", constant->InterfaceMethodref.class_index, constant_pool[constant->InterfaceMethodref.class_index - 1]->Utf8.bytes);
+            printf("Class name: cp_info#%d %s\n", constant->InterfaceMethodref.class_index, constant_pool[constant_pool[constant->InterfaceMethodref.class_index - 1]->InterfaceMethodref.class_index - 1]->Utf8.bytes);
             printf("Name and type: cp_info#%d <%s : %s>\n\n", constant->InterfaceMethodref.name_and_type_index, constant_pool[constant_pool[constant->InterfaceMethodref.name_and_type_index - 1]->NameAndType.name_index - 1]->Utf8.bytes, constant_pool[constant_pool[constant->InterfaceMethodref.name_and_type_index - 1]->NameAndType.descriptor_index - 1]->Utf8.bytes);
             break;
             case 12:
