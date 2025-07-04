@@ -69,6 +69,23 @@ u8 double_to_u8(double value) {
     return converterU8Double.u8;
 }
 
+u4 remove_from_stack(Frame * frame) {
+    OperandStack * operandStack = frame->stack_top;
+    frame->stack_size--;
+    u4 stackValue = operandStack->self;
+    frame->stack_top = operandStack->next;
+    free(operandStack);
+    return stackValue;
+}
+
+void add_to_stack(Frame * frame, u4 value) {
+    OperandStack * operandStack = malloc(sizeof(OperandStack));
+    frame->stack_size++;
+    operandStack->self = value;
+    operandStack->next = frame->stack_top;
+    frame->stack_top = operandStack;
+}
+
 
 
 
