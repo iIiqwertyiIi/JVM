@@ -443,7 +443,6 @@ AttributeType get_attribute_type(const char *name) {
 }
 
 
-//void print_code(u1* code, u4 code_length, cp_info** constant_pool) {
 void print_code(u1* code, u4 code_length) {
     printf("          Code:\n");
     for (u4 i = 0; i < code_length; ) {
@@ -493,9 +492,7 @@ void print_attribute_info(attribute_info **attributes, u2 attribute_count) {
                 printf("          - Maximum stack size: %u\n", attr->Code.max_stack);
                 printf("          - Maximum local variables: %u\n", attr->Code.max_locals);
                 printf("          - Code length: %u\n", attr->Code.code_length);
-                //print_code(attr->Code.code, attr->Code.code_length, constant_pool);
                 print_code(attr->Code.code, attr->Code.code_length);
-
                 if (attr->Code.exception_table_length > 0) {
                     printf("          Exception table:\n");
                     for (int j = 0; j < attr->Code.exception_table_length; j++) {
