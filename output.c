@@ -68,8 +68,8 @@ void print_class_file(ClassFile * class_file) {
         default:
         break;
     }
-    printf("This class: cp_info#%d %s\n", class_file->this_class, class_file->constant_pool[class_file->this_class - 1]->Utf8.bytes);
-    printf("Super class: cp_info#%d %s\n", class_file->super_class, class_file->constant_pool[class_file->super_class - 1]->Utf8.bytes);
+    printf("This class: cp_info#%d %s\n", class_file->this_class, class_file->constant_pool[class_file->constant_pool[class_file->this_class - 1]->Class.name_index - 1]->Utf8.bytes);
+    printf("Super class: cp_info#%d %s\n", class_file->super_class, class_file->constant_pool[class_file->constant_pool[class_file->super_class - 1]->Class.name_index - 1]->Utf8.bytes);
     printf("Interfaces count: %d\n", class_file->interfaces_count);
     printf("Fields count: %d\n", class_file->fields_count);
     printf("Methods count: %d\n", class_file->methods_count);
