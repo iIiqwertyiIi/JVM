@@ -45,4 +45,5 @@ int64_t u8_to_long(u8 value);
 u8 long_to_u8(int64_t value);
 double u8_to_double(u8 value);
 u8 double_to_u8(double value);
+
 #endif

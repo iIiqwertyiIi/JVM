@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 #include <stdint.h>
+#include <inttypes.h>
+#include <string.h>
 
 typedef uint8_t u1;
 typedef uint16_t u2;
@@ -141,7 +143,7 @@ typedef struct ClassFileBuffer {
 
 typedef struct OperandStack {
     u4 self;
-    OperandStack * next;
+    struct OperandStack * next;
 } OperandStack;
 
 typedef struct Frame {
@@ -151,7 +153,7 @@ typedef struct Frame {
     u4 stack_size;
     u4 * local_variables;
     Buffer pc;
-    Frame * next;
+    struct Frame * next;
 } Frame;
 
 typedef struct FrameStack {
@@ -169,6 +171,7 @@ typedef struct InstructionType {
 typedef struct Instruction {
     InstructionType * type;
     u1 * operands;
+    u2 operand_count;
 } Instruction;
 
 
