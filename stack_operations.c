@@ -43,7 +43,7 @@ u4 peek_stack(Frame * frame) {
 
 // Funções de conversão de tipo para instruções da JVM
 
-int d2f(Frame * frame, Instruction instruction) {
+int double_to_float(Frame * frame) {
     // Remove os dois valores da pilha (double ocupa 2 slots)
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
@@ -62,7 +62,7 @@ int d2f(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int d2i(Frame * frame, Instruction instruction) {
+int double_to_int(Frame * frame) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     
@@ -77,7 +77,7 @@ int d2i(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int d2l(Frame * frame, Instruction instruction) {
+int double_to_long(Frame * frame) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     
@@ -97,7 +97,7 @@ int d2l(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int f2d(Frame * frame, Instruction instruction) {
+int float_to_double(Frame * frame) {
     u4 float_bits = remove_from_stack(frame);
     float float_value = u4_to_float(float_bits);
     
@@ -113,7 +113,7 @@ int f2d(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int f2i(Frame * frame, Instruction instruction) {
+int float_to_int(Frame * frame) {
     u4 float_bits = remove_from_stack(frame);
     float float_value = u4_to_float(float_bits);
     
@@ -125,7 +125,7 @@ int f2i(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int f2l(Frame * frame, Instruction instruction) {
+int float_to_long(Frame * frame) {
     u4 float_bits = remove_from_stack(frame);
     float float_value = u4_to_float(float_bits);
     
@@ -141,7 +141,7 @@ int f2l(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int i2b(Frame * frame, Instruction instruction) {
+int int_to_byte(Frame * frame) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -153,7 +153,7 @@ int i2b(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int i2c(Frame * frame, Instruction instruction) {
+int int_to_char(Frame * frame) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -165,7 +165,7 @@ int i2c(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int i2d(Frame * frame, Instruction instruction) {
+int int_to_double(Frame * frame) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -181,7 +181,7 @@ int i2d(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int i2f(Frame * frame, Instruction instruction) {
+int int_to_float(Frame * frame) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -193,7 +193,7 @@ int i2f(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int i2l(Frame * frame, Instruction instruction) {
+int int_to_long(Frame * frame) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -209,7 +209,7 @@ int i2l(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int i2s(Frame * frame, Instruction instruction) {
+int int_to_short(Frame * frame) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -221,7 +221,7 @@ int i2s(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int l2d(Frame * frame, Instruction instruction) {
+int long_to_double(Frame * frame) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     
@@ -240,7 +240,7 @@ int l2d(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int l2f(Frame * frame, Instruction instruction) {
+int long_to_float(Frame * frame) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     
@@ -255,7 +255,7 @@ int l2f(Frame * frame, Instruction instruction) {
     return 0;
 }
 
-int l2i(Frame * frame, Instruction instruction) {
+int long_to_int(Frame * frame) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     
