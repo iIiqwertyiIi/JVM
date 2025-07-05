@@ -51,4 +51,4 @@ int execute_instruction(FrameStack* frame_stack, u1 opcode, u1* bytecode, u8* pc
 // Função auxiliar para debug
 void print_operand_stack(FrameStack* frame_stack, int max_elements);
 
-#endif // INSTRUCTIONS_H
+#endif 
