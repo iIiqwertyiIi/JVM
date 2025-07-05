@@ -2,6 +2,7 @@
 #define TYPES_H
 #include <stdint.h>
 #include <inttypes.h>
+#include <string.h>
 
 typedef uint8_t u1;
 typedef uint16_t u2;
