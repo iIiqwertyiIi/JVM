@@ -145,7 +145,10 @@ typedef struct InstructionType {
     u1 opcode;
     u1 operand_count;
     char * mnemonic;
-    int (*opcode_function) (Frame * frame, Instruction instruction);
+    union {
+        int (*opcode_function) (Frame * frame);
+        int (*opcode_function) (Frame * frame, Instruction instruction);
+    };
 } InstructionType;
 
 struct Instruction {
