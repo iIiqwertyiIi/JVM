@@ -2,7 +2,6 @@
 #include "reader.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
 // --- Protótipo da Função Auxiliar Estática ---
 static attribute_info** read_nested_attributes_array(u2 count, cp_info** constant_pool);

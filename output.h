@@ -12,6 +12,6 @@ void print_field_info(field_info **field_info, u2 fields_count);
 
 void print_method_info(method_info **methods, u2 methods_count);
 
-void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_info** constant_pool);
+void print_attribute_info(attribute_info **attributes, u2 attribute_count);
 
 #endif // OUTPUT_H
