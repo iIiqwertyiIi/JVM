@@ -4,6 +4,7 @@
 #include <math.h>
 #include "types.h"
 #include "helper.h"
+#include "stack_operations.h"
 
 int iadd(Frame * frame);
 int ladd(Frame * frame);

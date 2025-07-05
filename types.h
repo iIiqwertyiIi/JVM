@@ -161,6 +161,7 @@ typedef struct FrameStack {
     Frame * top_frame;
 } FrameStack;
 
+/*
 typedef struct InstructionType {
     u1 opcode;
     u1 operand_count;
@@ -173,6 +174,6 @@ typedef struct Instruction {
     u1 * operands;
     u2 operand_count;
 } Instruction;
-
+*/
 
 #endif

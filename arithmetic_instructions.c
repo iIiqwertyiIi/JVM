@@ -1,6 +1,5 @@
 #include "arithmetic_instructions.h"
 
-//precisa do Instruction?
 int iadd(Frame * frame) {
     u4 value2 = remove_from_stack(frame);
     u4 value1 = remove_from_stack(frame);
