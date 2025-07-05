@@ -3,73 +3,75 @@
 #include <stdio.h>
 
 void print_class_file(ClassFile * class_file) {
+    char acess_flag[100] = " ";
     printf("Entrando em print_class_file...\n");
     printf("Assinatura: 0x%x\n", class_file->magic);
     printf("General Information\n");
     printf("Minor version: %d\n", class_file->minor_version);
     printf("Major version: %d [1.%d]\n", class_file->major_version, class_file->major_version - 44);
     printf("Constant pool count: %d\n", class_file->constant_pool_count);
-    printf("Access flags: 0x%x\n", class_file->access_flags);
+    printf("Access flags: 0x%x ", class_file->access_flags);
     switch (class_file->access_flags & 0x000f) {
         case 0x0001:
-        printf("ACC_PUBLIC\n");
+        strcat(acess_flag, "public ");
         break;
         default:
         break;
     }
     switch (class_file->access_flags & 0x00f0) {
         case 0x0010:
-        printf("ACC_FINAL\n");
+        strcat(acess_flag, "final ");
         break;
         case 0x0020:
-        printf("ACC_SUPER\n");
+        strcat(acess_flag, "super ");
         break;
         case 0x0030:
-        printf("ACC_FINAL\nACC_SUPER\n");
+        strcat(acess_flag, "final super ");
         break;
         default:
         break;
     }
     switch (class_file->access_flags & 0x0f00) {
         case 0x0200:
-        printf("ACC_INTERFACE\n");
+        strcat(acess_flag, "interface ");
         break;
         case 0x0400:
-        printf("ACC_ABSTRACT\n");
+        strcat(acess_flag, "abstract ");
         break;
         case 0x0600:
-        printf("ACC_INTERFACE\nACC_ABSTRACT\n");
+        strcat(acess_flag, "interface abstract ");
         break;
         default:
         break;
     }
     switch (class_file->access_flags & 0xf000) {
         case 0x1000:
-        printf("ACC_SYNTHETIC\n");
+        strcat(acess_flag, "synthetic ");
         break;
         case 0x2000:
-        printf("ACC_ANNOTATION\n");
+        strcat(acess_flag, "annotation ");
         break;
         case 0x4000:
-        printf("ACC_ENUM\n");
+        strcat(acess_flag, "enum ");
         break;
         case 0x3000:
-        printf("ACC_SYNTHETIC\nACC_ANNOTATION\n");
+        strcat(acess_flag, "synthetic annotation ");
         break;
         case 0x5000:
-        printf("ACC_SYNTHETIC\nACC_ENUM\n");
+        strcat(acess_flag, "synthetic enum ");
         break;
         case 0x6000:
-        printf("ACC_ANNOTATION\nACC_ENUM\n");
+        strcat(acess_flag, "annotation enum ");
         break;
         case 0x7000:
-        printf("ACC_SYNTHETIC\nACC_ANNOTATION\nACC_ENUM\n");
+        strcat(acess_flag, "synthetic annotation enum ");
         break;
         default:
         break;
     }
-    printf("This class: cp_info#%d %s\n", class_file->this_class, class_file->constant_pool[class_file->this_class - 1]->Utf8.bytes);
-    printf("Super class: cp_info#%d %s\n", class_file->super_class, class_file->constant_pool[class_file->super_class - 1]->Utf8.bytes);
+    printf("[%s]\n", acess_flag);
+    printf("This class: cp_info#%d %s\n", class_file->this_class, class_file->constant_pool[class_file->constant_pool[class_file->this_class - 1]->Class.name_index - 1]->Utf8.bytes);
+    printf("Super class: cp_info#%d %s\n", class_file->super_class, class_file->constant_pool[class_file->constant_pool[class_file->super_class - 1]->Class.name_index - 1]->Utf8.bytes);
     printf("Interfaces count: %d\n", class_file->interfaces_count);
     printf("Fields count: %d\n", class_file->fields_count);
     printf("Methods count: %d\n", class_file->methods_count);
@@ -77,6 +79,7 @@ void print_class_file(ClassFile * class_file) {
     print_cp_info(class_file->constant_pool, class_file->constant_pool_count);
     print_field_info(class_file->fields, class_file->fields_count);
     print_method_info(class_file->methods, class_file->methods_count);
+    print_attribute_info(class_file->attributes, class_file->attributes_count);
 }
 
 void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
@@ -91,17 +94,17 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
             break;
             case 9:
             printf("[%d] CONSTANT_Fieldref_info\n", i + 1);
-            printf("Class name: cp_info#%d %s\n", constant->Fieldref.class_index, constant_pool[constant->Fieldref.class_index - 1]->Utf8.bytes);
+            printf("Class name: cp_info#%d %s\n", constant->Fieldref.class_index, constant_pool[constant_pool[constant->Fieldref.class_index - 1]->Fieldref.class_index - 1]->Utf8.bytes);
             printf("Name and type: cp_info#%d <%s : %s>\n\n", constant->Fieldref.name_and_type_index, constant_pool[constant_pool[constant->Fieldref.name_and_type_index - 1]->NameAndType.name_index - 1]->Utf8.bytes, constant_pool[constant_pool[constant->Fieldref.name_and_type_index - 1]->NameAndType.descriptor_index - 1]->Utf8.bytes);
             break;
             case 10:
             printf("[%d] CONSTANT_Methodref_info\n", i + 1);
-            printf("Class name: cp_info#%d %s\n", constant->Methodref.class_index, constant_pool[constant->Methodref.class_index - 1]->Utf8.bytes);
+            printf("Class name: cp_info#%d %s\n", constant->Methodref.class_index, constant_pool[constant_pool[constant->Methodref.class_index - 1]->Methodref.class_index - 1]->Utf8.bytes);
             printf("Name and type: cp_info#%d <%s : %s>\n\n", constant->Methodref.name_and_type_index, constant_pool[constant_pool[constant->Methodref.name_and_type_index - 1]->NameAndType.name_index - 1]->Utf8.bytes, constant_pool[constant_pool[constant->Methodref.name_and_type_index - 1]->NameAndType.descriptor_index - 1]->Utf8.bytes);
             break;
             case 11:
             printf("[%d] CONSTANT_InterfaceMethodref_info\n", i + 1);
-            printf("Class name: cp_info#%d %s\n", constant->InterfaceMethodref.class_index, constant_pool[constant->InterfaceMethodref.class_index - 1]->Utf8.bytes);
+            printf("Class name: cp_info#%d %s\n", constant->InterfaceMethodref.class_index, constant_pool[constant_pool[constant->InterfaceMethodref.class_index - 1]->InterfaceMethodref.class_index - 1]->Utf8.bytes);
             printf("Name and type: cp_info#%d <%s : %s>\n\n", constant->InterfaceMethodref.name_and_type_index, constant_pool[constant_pool[constant->InterfaceMethodref.name_and_type_index - 1]->NameAndType.name_index - 1]->Utf8.bytes, constant_pool[constant_pool[constant->InterfaceMethodref.name_and_type_index - 1]->NameAndType.descriptor_index - 1]->Utf8.bytes);
             break;
             case 12:
@@ -132,14 +135,14 @@ void print_cp_info(cp_info * * constant_pool, u2 constant_pool_count) {
             printf("[%d] CONSTANT_Long_info\n", i + 1);
             printf("High Bytes: 0x%x\n", constant->Long.high_bytes);
             printf("Low Bytes: 0x%x\n", constant->Long.low_bytes);
-            printf("Long: %lld\n\n", (u8) constant->Long.high_bytes << 32 | constant->Long.low_bytes);
+            printf("Long: %" PRIu64 "\n", (u8) constant->Long.high_bytes << 32 | constant->Long.low_bytes);
             i++;
             break;
             case 6:
             printf("[%d] CONSTANT_Double_info\n", i + 1);
             printf("High Bytes: 0x%x\n", constant->Double.high_bytes);
             printf("Low Bytes: 0x%x\n", constant->Double.low_bytes);
-            printf("Double: %lld\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
+            printf("Double: %" PRIu64 "\n\n", ((u8) constant->Double.high_bytes << 32 | constant->Double.low_bytes));
             i++;
             break;
         }
@@ -153,98 +156,102 @@ void print_field_info(field_info * * fields, u2 fields_count) {
     printf("\n====================================================================\nFields\n");
     for (int i = 0; i < fields_count; i++) {
         field_info * field = fields[i];
+        char acess_flag[100] = " ";
         printf("[%d] %s\n", i, constant[field->name_index - 1]->Utf8.bytes);
         printf("Name: cp_info#%d <%s>\n", field->name_index, constant[field->name_index - 1]->Utf8.bytes);
         printf("Descriptor: cp_info#%d <%s>\n", field->descriptor_index, constant[field->descriptor_index - 1]->Utf8.bytes);
-        printf("Access flags: 0x%x", field->access_flags);
+        printf("Access flags: 0x%x ", field->access_flags);
         switch (field->access_flags & 0x000f) {
             case 0x0001:
-            printf("ACC_PUBLIC\n");
+            strcat(acess_flag, "public ");
             break;
             case 0x0002:
-            printf("ACC_PRIVATE\n");
+            strcat(acess_flag, "private ");
             break;
             case 0x0004:
-            printf("ACC_PROTECTED\n");
+            strcat(acess_flag, "protected ");
             break;
             case 0x0008:
-            printf("ACC_STATIC\n");
+            strcat(acess_flag, "static ");
             break;
             case 0x0003:
-            printf("ACC_PUBLIC\nACC_PRIVATE\n");
+            strcat(acess_flag, "public private ");
             break;
             case 0x0005:
-            printf("ACC_PUBLIC\nACC_PROTECTED\n");
+            strcat(acess_flag, "public protected ");
             break;
             case 0x0009:
-            printf("ACC_PUBLIC\nACC_STATIC\n");
+            strcat(acess_flag, "public static ");
             break;
             case 0x0006:
-            printf("ACC_PRIVATE\nACC_PROTECTED\n");
+            strcat(acess_flag, "private protected ");
             break;
             case 0x000a:
-            printf("ACC_PRIVATE\nACC_STATIC\n");
+            strcat(acess_flag, "private static ");
             break;
             case 0x000c:
-            printf("ACC_PROTECTED\nACC_STATIC\n");
+            strcat(acess_flag, "protected static ");
             break;
             case 0x0007:
-            printf("ACC_PUBLIC\nACC_PRIVATE\nACC_PROTECTED\n");
+            strcat(acess_flag, "public private protected ");
             break;
             case 0x000b:
-            printf("ACC_PUBLIC\nACC_PRIVATE\nACC_STATIC\n");
+            strcat(acess_flag, "public private static ");
             break;
             case 0x000d:
-            printf("ACC_PUBLIC\nACC_PROTECTED\nACC_STATIC\n");
+            strcat(acess_flag, "public protected static ");
             break;
             case 0x000e:
-            printf("ACC_PRIVATE\nACC_PROTECTED\nACC_STATIC\n");
+            strcat(acess_flag, "private protected static ");
             break;
             case 0x000f:
-            printf("ACC_PUBLIC\nACC_PRIVATE\nACC_PROTECTED\nACC_STATIC\n");
+            strcat(acess_flag, "public private protected static ");
             break;
             default:
             break;
         }
         switch (field->access_flags & 0x00f0) {
             case 0x0010:
-            printf("ACC_FINAL\n");
+            strcat(acess_flag, "final ");
             break;
             case 0x0040:
-            printf("ACC_VOLATILE\n");
+            strcat(acess_flag, "volatile ");
             break;
             case 0x0080:
-            printf("ACC_TRANSIENT\n");
+            strcat(acess_flag, "transient ");
             break;
             case 0x0030:
-            printf("ACC_FINAL\nACC_VOLATILE\n");
+            strcat(acess_flag, "final volatile ");
             break;
             case 0x0090:
-            printf("ACC_FINAL\nACC_TRANSIENT\n");
+            strcat(acess_flag, "final transient ");
             break;
             case 0x00c0:
-            printf("ACC_VOLATILE\nACC_TRANSIENT\n");
+            strcat(acess_flag, "volatile transient ");
             break;
             case 0x00b0:
-            printf("ACC_FINAL\nACC_VOLATILE\nACC_TRANSIENT\n");
+            strcat(acess_flag, "final volatile transient ");
             break;
             default:
             break;
         }
         switch (field->access_flags & 0xf000) {
             case 0x1000:
-            printf("ACC_SYNTHETIC\n");
+            strcat(acess_flag, "synthetic ");
             break;
             case 0x4000:
-            printf("ACC_ENUM\n");
+            strcat(acess_flag, "enum ");
             break;
             case 0x5000:
-            printf("ACC_SYNTHETIC\nACC_ENUM\n");
+            strcat(acess_flag, "synthetic enum ");
             break;
             default:
             break;
         }
+        printf("[%s]\n", acess_flag);
         printf("Attributes count: %d\n\n", field->attributes_count);
+        print_attribute_info(field->attributes, field->attributes_count);
+
     }
 };
 
@@ -255,145 +262,149 @@ void print_method_info(method_info * * methods, u2 methods_count) {
     printf("\n====================================================================\nMethods\n");
     for (int i = 0; i < methods_count; i++) {
         method_info * method = methods[i];
+        char acess_flag[100] = " ";
         printf("[%d] %s", i, constant[method->name_index - 1]->Utf8.bytes);
         printf("Name: cp_info#%d <%s>\n", method->name_index, constant[method->name_index - 1]->Utf8.bytes);
         printf("Descriptor: cp_info#%d <%s>\n", method->descriptor_index, constant[method->descriptor_index - 1]->Utf8.bytes);
-        printf("Access flags: 0x%x", method->access_flags);
+        printf("Access flags: 0x%x ", method->access_flags);
         switch (method->access_flags & 0x000f) {
             case 0x0001:
-            printf("ACC_PUBLIC\n");
+            strcat(acess_flag, "public ");
             break;
             case 0x0002:
-            printf("ACC_PRIVATE\n");
+            strcat(acess_flag, "private ");
             break;
             case 0x0004:
-            printf("ACC_PROTECTED\n");
+            strcat(acess_flag, "protected ");
             break;
             case 0x0008:
-            printf("ACC_STATIC\n");
+            strcat(acess_flag, "static ");
             break;
             case 0x0003:
-            printf("ACC_PUBLIC\nACC_PRIVATE\n");
+            strcat(acess_flag, "public private ");
             break;
             case 0x0005:
-            printf("ACC_PUBLIC\nACC_PROTECTED\n");
+            strcat(acess_flag, "public protected ");
             break;
             case 0x0009:
-            printf("ACC_PUBLIC\nACC_STATIC\n");
+            strcat(acess_flag, "public static ");
             break;
             case 0x0006:
-            printf("ACC_PRIVATE\nACC_PROTECTED\n");
+            strcat(acess_flag, "private protected ");
             break;
             case 0x000a:
-            printf("ACC_PRIVATE\nACC_STATIC\n");
+            strcat(acess_flag, "private static ");
             break;
             case 0x000c:
-            printf("ACC_PROTECTED\nACC_STATIC\n");
+            strcat(acess_flag, "protected static ");
             break;
             case 0x0007:
-            printf("ACC_PUBLIC\nACC_PRIVATE\nACC_PROTECTED\n");
+            strcat(acess_flag, "public private protected ");
             break;
             case 0x000b:
-            printf("ACC_PUBLIC\nACC_PRIVATE\nACC_STATIC\n");
+            strcat(acess_flag, "public private static ");
             break;
             case 0x000d:
-            printf("ACC_PUBLIC\nACC_PROTECTED\nACC_STATIC\n");
+            strcat(acess_flag, "public protected static ");
             break;
             case 0x000e:
-            printf("ACC_PRIVATE\nACC_PROTECTED\nACC_STATIC\n");
+            strcat(acess_flag, "private protected static ");
             break;
             case 0x000f:
-            printf("ACC_PUBLIC\nACC_PRIVATE\nACC_PROTECTED\nACC_STATIC\n");
+            strcat(acess_flag, "public private protected static ");
             break;
             default:
             break;
         }
         switch (method->access_flags & 0x00f0) {
             case 0x0010:
-            printf("ACC_FINAL\n");
+            strcat(acess_flag, "final ");
             break;
             case 0x0020:
-            printf("ACC_SYNCHRONIZED\n");
+            strcat(acess_flag, "synchronized ");
             break;
             case 0x0040:
-            printf("ACC_BRIDGE\n");
+            strcat(acess_flag, "bridge ");
             break;
             case 0x0080:
-            printf("ACC_VARARGS\n");
+            strcat(acess_flag, "varargs ");
             break;
             case 0x0030:
-            printf("ACC_FINAL\nACC_SYNCHRONIZED\n");
+            strcat(acess_flag, "final synchronized ");
             break;
             case 0x0050:
-            printf("ACC_FINAL\nACC_BRIDGE\n");
+            strcat(acess_flag, "final bridge ");
             break;
             case 0x0090:
-            printf("ACC_FINAL\nACC_VARARGS\n");
+            strcat(acess_flag, "final varargs ");
             break;
             case 0x0060:
-            printf("ACC_SYNCHRONIZED\nACC_BRIDGE\n");
+            strcat(acess_flag, "synchronized bridge ");
             break;
             case 0x00a0:
-            printf("ACC_SYNCHRONIZED\nACC_VARARGS\n");
+            strcat(acess_flag, "synchronized varargs ");
             break;
             case 0x00c0:
-            printf("ACC_BRIDGE\nACC_VARARGS\n");
+            strcat(acess_flag, "bridge varargs ");
             break;
             case 0x0070:
-            printf("ACC_FINAL\nACC_SYNCHRONIZED\nACC_BRIDGE\n");
+            strcat(acess_flag, "final synchronized bridge ");
             break;
             case 0x00b0:
-            printf("ACC_FINAL\nACC_SYNCHRONIZED\nACC_VARARGS\n");
+            strcat(acess_flag, "final synchronized varargs ");
             break;
             case 0x00d0:
-            printf("ACC_FINAL\nACC_BRIDGE\nACC_VARARGS\n");
+            strcat(acess_flag, "final bridge varargs ");
             break;
             case 0x00e0:
-            printf("ACC_SYNCHRONIZED\nACC_BRIDGE\nACC_VARARGS\n");
+            strcat(acess_flag, "synchronized bridge varargs ");
             break;
             case 0x00f0:
-            printf("ACC_FINAL\nACC_SYNCHRONIZED\nACC_BRIDGE\nACC_VARARGS\n");
+            strcat(acess_flag, "final synchronized bridge varargs ");
             break;
             default:
             break;
         }
         switch (method->access_flags & 0x0f00) {
             case 0x0100:
-            printf("ACC_NATIVE\n");
+            strcat(acess_flag, "native ");
             break;
             case 0x0400:
-            printf("ACC_ABSTRACT\n");
+            strcat(acess_flag, "abstract ");
             break;
             case 0x0800:
-            printf("ACC_STRICT\n");
+            strcat(acess_flag, "strict ");
             break;
             case 0x0300:
-            printf("ACC_NATIVE\nACC_ABSTRACT\n");
+            strcat(acess_flag, "native abstract ");
             break;
             case 0x0900:
-            printf("ACC_NATIVE\nACC_STRICT\n");
+            strcat(acess_flag, "native strict ");
             break;
             case 0x0c00:
-            printf("ACC_ABSTRACT\nACC_STRICT\n");
+            strcat(acess_flag, "abstract strict ");
             break;
             case 0x0b00:
-            printf("ACC_NATIVE\nACC_ABSTRACT\nACC_STRICT\n");
+            strcat(acess_flag, "native abstract strict ");
             break;
             default:
             break;
         }
         switch (method->access_flags & 0xf000) {
             case 0x1000:
-            printf("ACC_SYNTHETIC\n");
+            strcat(acess_flag, "synthetic ");
             break;
             default:
             break;
         }
+        printf("[%s]\n", acess_flag);
         printf("Attributes count: %d\n\n", method->attributes_count);
+        print_attribute_info(method->attributes, method->attributes_count);
+
     }
 }
-/*
-#define CONSTANT_Utf8 1
+
+/* #define CONSTANT_Utf8 1
 
 char *get_utf8_from_constant_pool(cp_info **constant_pool, u2 index) {
     if (constant_pool == NULL || constant_pool[index] == NULL) {
@@ -416,7 +427,7 @@ char *get_utf8_from_constant_pool(cp_info **constant_pool, u2 index) {
 
     return utf8_string;
 }
-
+ */
 typedef enum {
     ATTR_UNKNOWN,
     ATTR_CONSTANTVALUE,
@@ -438,9 +449,31 @@ AttributeType get_attribute_type(const char *name) {
 }
 
 
-// A função principal que exibe todos os atributos
-void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_info** constant_pool) {
+void print_code(u1* code, u4 code_length) {
+    printf("          Code:\n");
+    for (u4 i = 0; i < code_length; ) {
+        printf("            %u: ", i);
+        u1 opcode = code[i];
+        switch (opcode) {
+            case 0x2a: printf("aload_0\n"); i += 1; break;
+            case 0x2b: printf("aload_1\n"); i += 1; break;
+            case 0xb1: printf("return\n"); i += 1; break;
+            case 0xb2: printf("getstatic #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
+            case 0x12: printf("ldc #%u\n", code[i+1]); i += 2; break;
+            case 0xb6: printf("invokevirtual #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
+            case 0xb7: printf("invokespecial #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
+            
+            default:
+                printf("opcode 0x%02x (não implementado)\n", opcode);
+                i += 1;
+                break;
+        }
+    }
+}
+void print_attribute_info(attribute_info **attributes, u2 attribute_count) {
     if (attribute_count == 0) return;
+    ClassFileBuffer * classes_buffer = get_class_file_buffer();
+    cp_info * * constant_pool = classes_buffer->buffer->constant_pool;
     
     printf("\n    Attributes:\n");
     for (int i = 0; i < attribute_count; i++) {
@@ -465,8 +498,7 @@ void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_in
                 printf("          - Maximum stack size: %u\n", attr->Code.max_stack);
                 printf("          - Maximum local variables: %u\n", attr->Code.max_locals);
                 printf("          - Code length: %u\n", attr->Code.code_length);
-                print_code(attr->Code.code, attr->Code.code_length, constant_pool);
-
+                print_code(attr->Code.code, attr->Code.code_length);
                 if (attr->Code.exception_table_length > 0) {
                     printf("          Exception table:\n");
                     for (int j = 0; j < attr->Code.exception_table_length; j++) {
@@ -485,7 +517,7 @@ void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_in
                 
                 // Chamada recursiva para exibir os atributos aninhados (ex: LineNumberTable)
                 if (attr->Code.attributes_count > 0) {
-                    print_attribute_info(attr->Code.attributes, attr->Code.attributes_count, constant_pool);
+                    print_attribute_info(attr->Code.attributes, attr->Code.attributes_count);
                 }
                 break;
 
@@ -523,27 +555,3 @@ void print_attribute_info(attribute_info **attributes, u2 attribute_count, cp_in
 }
 
 
-void print_code(u1* code, u4 code_length, cp_info** constant_pool) {
-    printf("          Code:\n");
-    for (u4 i = 0; i < code_length; ) {
-        printf("            %u: ", i);
-        u1 opcode = code[i];
-        switch (opcode) {
-            // Opcodes mais comuns
-            case 0x2a: printf("aload_0\n"); i += 1; break;
-            case 0x2b: printf("aload_1\n"); i += 1; break;
-            case 0xb1: printf("return\n"); i += 1; break;
-            case 0xb2: printf("getstatic #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
-            case 0x12: printf("ldc #%u\n", code[i+1]); i += 2; break;
-            case 0xb6: printf("invokevirtual #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
-            case 0xb7: printf("invokespecial #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
-            
-            // Outros opcodes...
-            default:
-                printf("opcode 0x%02x (não implementado)\n", opcode);
-                i += 1;
-                break;
-        }
-    }
-}
-*/
