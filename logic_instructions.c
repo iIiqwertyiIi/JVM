@@ -1,4 +1,4 @@
-#include "instructions.h"
+#include "logic_instructions.h"
 #include "helper.h"
 #include <stdio.h>
 #include <stdlib.h>
