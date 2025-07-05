@@ -18,6 +18,7 @@ SRCS = reader.c \
        class_file.c \
        helper.c \
        stack_operations.c \
+	   instructions.c \
 	   main.c \
 
 # Arquivos objeto
@@ -33,7 +34,8 @@ HEADERS = types.h \
           output.h \
           class_file.h \
           helper.h \
-          stack_operations.h
+          stack_operations.h \
+		  instructions.h \
 
 # Regra principal
 all: directories $(TARGET)
@@ -95,6 +97,10 @@ $(OBJ_DIR)/helper.o: helper.c helper.h types.h
 $(OBJ_DIR)/stack_operations.o: stack_operations.c stack_operations.h types.h helper.h
 	@echo "Compilando stack_operations.c..."
 	@$(CC) $(CFLAGS) -c stack_operations.c -o $@
+
+$(OBJ_DIR)/instructions.o: instructions.c instructions.h types.h
+	@echo "Compilando instructions.c..."
+	@$(CC) $(CFLAGS) -c instructions.c -o $@
 
 # Limpeza
 clean:
