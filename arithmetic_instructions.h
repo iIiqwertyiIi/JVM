@@ -4,38 +4,38 @@
 #include <math.h>
 #include "types.h"
 #include "helper.h"
-#include "stack_operations.h"
+#include "instructions.h"
 
-int iadd(Frame * frame);
-int ladd(Frame * frame);
-int fadd(Frame * frame);
-int dadd(Frame * frame);
-int isub(Frame * frame);
-int lsub(Frame * frame);
-int fsub(Frame * frame);
-int dsub(Frame * frame);
-int imul(Frame * frame);
-int lmul(Frame * frame);
-int fmul(Frame * frame);
-int dmul(Frame * frame);
-int idiv(Frame * frame);
-int ldiv(Frame * frame);
-int fdiv(Frame * frame);
-int ddiv(Frame * frame);
-int irem(Frame * frame);
-int lrem(Frame * frame);
-int frem(Frame * frame);
-int drem(Frame * frame);
-int ineg(Frame * frame);
-int lneg(Frame * frame);
-int fneg(Frame * frame);
-int dneg(Frame * frame);
-int ishl(Frame * frame);
-int lshl(Frame * frame);
-int ishr(Frame * frame);
-int lshr(Frame * frame);
-int iushr(Frame * frame);
-int lushr(Frame * frame);
+int iadd(Frame * frame, Instruction instruction);
+int ladd(Frame * frame, Instruction instruction);
+int fadd(Frame * frame, Instruction instruction);
+int dadd(Frame * frame, Instruction instruction);
+int isub(Frame * frame, Instruction instruction);
+int lsub(Frame * frame, Instruction instruction);
+int fsub(Frame * frame, Instruction instruction);
+int dsub(Frame * frame, Instruction instruction);
+int imul(Frame * frame, Instruction instruction);
+int lmul(Frame * frame, Instruction instruction);
+int fmul(Frame * frame, Instruction instruction);
+int dmul(Frame * frame, Instruction instruction);
+int idiv(Frame * frame, Instruction instruction);
+int ldiv_(Frame * frame, Instruction instruction);
+int fdiv(Frame * frame, Instruction instruction);
+int ddiv(Frame * frame, Instruction instruction);
+int irem(Frame * frame, Instruction instruction);
+int lrem(Frame * frame, Instruction instruction);
+int frem(Frame * frame, Instruction instruction);
+int drem(Frame * frame, Instruction instruction);
+int ineg(Frame * frame, Instruction instruction);
+int lneg(Frame * frame, Instruction instruction);
+int fneg(Frame * frame, Instruction instruction);
+int dneg(Frame * frame, Instruction instruction);
+int ishl(Frame * frame, Instruction instruction);
+int lshl(Frame * frame, Instruction instruction);
+int ishr(Frame * frame, Instruction instruction);
+int lshr(Frame * frame, Instruction instruction);
+int iushr(Frame * frame, Instruction instruction);
+int lushr(Frame * frame, Instruction instruction);
 
 
 

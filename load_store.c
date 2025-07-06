@@ -1,7 +1,7 @@
 #include "load_store.h"
 
 int aconst_null(Frame * frame, Instruction instruction) {
-    add_to_stack(frame, (u4) NULL);
+    add_to_stack(frame, (u4) 0); //0 aqui sirvirá como NULL
     return 0;
 }
 
