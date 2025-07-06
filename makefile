@@ -50,7 +50,7 @@ directories:
 # Compilar o executável
 $(TARGET): $(OBJS)
 	@echo "Linkando $@..."
-	@$(CC) $(CFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJS)
+	@$(CC) $(CFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJS) -lm
 	@echo "Build completo! Executável: $(BIN_DIR)/$(TARGET)"
 
 # Regra genérica para compilar arquivos objeto
