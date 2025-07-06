@@ -1,6 +1,6 @@
 #include "arithmetic_instructions.h"
 
-int iadd(Frame * frame) {
+int iadd(Frame * frame, Instruction instruction) {
     u4 value2 = remove_from_stack(frame);
     u4 value1 = remove_from_stack(frame);
     int32_t a_result = u4_to_int(value1) + u4_to_int(value2);
@@ -8,7 +8,7 @@ int iadd(Frame * frame) {
     return 0;
 }
 
-int ladd(Frame * frame) {
+int ladd(Frame * frame, Instruction instruction) {
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -27,7 +27,7 @@ int ladd(Frame * frame) {
   return 0;
 }
 
-int fadd(Frame * frame) {
+int fadd(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   float result = u4_to_float(value1) + u4_to_float(value2);
@@ -36,7 +36,7 @@ int fadd(Frame * frame) {
   return 0;
 }
 
-int dadd(Frame * frame){
+int dadd(Frame * frame, Instruction instruction){
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -55,7 +55,7 @@ int dadd(Frame * frame){
   return 0;
 }
 
-int isub(Frame * frame) {
+int isub(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   int32_t result = u4_to_int(value1) - u4_to_int(value2);
@@ -64,7 +64,7 @@ int isub(Frame * frame) {
   return 0;
 }
 
-int lsub(Frame * frame) {
+int lsub(Frame * frame, Instruction instruction) {
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -83,7 +83,7 @@ int lsub(Frame * frame) {
   return 0;
 }
 
-int fsub(Frame * frame) {
+int fsub(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   float result = u4_to_float(value1) - u4_to_float(value2);
@@ -92,7 +92,7 @@ int fsub(Frame * frame) {
   return 0;
 }
 
-int dsub(Frame * frame){
+int dsub(Frame * frame, Instruction instruction){
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -111,7 +111,7 @@ int dsub(Frame * frame){
   return 0;
 }
 
-int imul(Frame * frame) {
+int imul(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   int32_t result = u4_to_int(value1) * u4_to_int(value2);
@@ -120,7 +120,7 @@ int imul(Frame * frame) {
   return 0;
 }
 
-int lmul(Frame * frame) {
+int lmul(Frame * frame, Instruction instruction) {
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -139,7 +139,7 @@ int lmul(Frame * frame) {
   return 0;
 }
 
-int fmul(Frame * frame) {
+int fmul(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   float result = u4_to_float(value1) * u4_to_float(value2);
@@ -148,7 +148,7 @@ int fmul(Frame * frame) {
   return 0;
 }
 
-int dmul(Frame * frame){
+int dmul(Frame * frame, Instruction instruction){
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -167,7 +167,7 @@ int dmul(Frame * frame){
   return 0;
 }
 
-int idiv(Frame * frame) {
+int idiv(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   int32_t result = u4_to_int(value1) / u4_to_int(value2);
@@ -176,7 +176,7 @@ int idiv(Frame * frame) {
   return 0;
 }
 
-int ldiv(Frame * frame) {
+int ldiv_(Frame * frame, Instruction instruction) {
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -195,7 +195,7 @@ int ldiv(Frame * frame) {
   return 0;
 }
 
-int fdiv(Frame * frame) {
+int fdiv(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   float result = u4_to_float(value1) / u4_to_float(value2);
@@ -204,7 +204,7 @@ int fdiv(Frame * frame) {
   return 0;
 }
 
-int ddiv(Frame * frame){
+int ddiv(Frame * frame, Instruction instruction){
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -223,7 +223,7 @@ int ddiv(Frame * frame){
   return 0;
 }
 
-int irem(Frame * frame) {
+int irem(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   int32_t result = u4_to_int(value1) % u4_to_int(value2);
@@ -232,7 +232,7 @@ int irem(Frame * frame) {
   return 0;
 }
 
-int lrem(Frame * frame) {
+int lrem(Frame * frame, Instruction instruction) {
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -251,7 +251,7 @@ int lrem(Frame * frame) {
   return 0;
 }
 
-int frem(Frame * frame) {
+int frem(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   if (u4_to_float(value2) == 0.0f) {
@@ -264,7 +264,7 @@ int frem(Frame * frame) {
   return 0;
 }
 
-int drem(Frame * frame){
+int drem(Frame * frame, Instruction instruction){
   u8 value2_low = (u8) remove_from_stack(frame);
   u8 value2_high = (u8) remove_from_stack(frame);
   u8 value2 = value2_high << 32;
@@ -290,7 +290,7 @@ int drem(Frame * frame){
   return 0;
 }
 
-int ineg(Frame * frame) {
+int ineg(Frame * frame, Instruction instruction) {
   u4 value1 = remove_from_stack(frame);
   int32_t result = - u4_to_int(value1);
   add_to_stack(frame, int_to_u4(result));
@@ -298,7 +298,7 @@ int ineg(Frame * frame) {
   return 0;
 }
 
-int lneg(Frame * frame) {
+int lneg(Frame * frame, Instruction instruction) {
   u8 value1_low = (u8) remove_from_stack(frame);
   u8 value1_high = (u8) remove_from_stack(frame);
   u8 value1 = value1_high << 32;
@@ -313,7 +313,7 @@ int lneg(Frame * frame) {
   return 0;
 }
 
-int fneg(Frame * frame) {
+int fneg(Frame * frame, Instruction instruction) {
   u4 value1 = remove_from_stack(frame);
   float result = - u4_to_float(value1);
   add_to_stack(frame, float_to_u4(result));
@@ -321,7 +321,7 @@ int fneg(Frame * frame) {
   return 0;
 }
 
-int dneg(Frame * frame){
+int dneg(Frame * frame, Instruction instruction){
   u8 value1_low = (u8) remove_from_stack(frame);
   u8 value1_high = (u8) remove_from_stack(frame);
   u8 value1 = value1_high << 32;
@@ -336,7 +336,7 @@ int dneg(Frame * frame){
   return 0;
 }
 
-int ishl(Frame * frame) {
+int ishl(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   int32_t result = u4_to_int(value1) << (u4_to_int(value2) & 0x1f);
@@ -345,7 +345,7 @@ int ishl(Frame * frame) {
   return 0;
 }
 
-int ishr(Frame * frame) {
+int ishr(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   int32_t result = u4_to_int(value1) >> (u4_to_int(value2) & 0x1f);
@@ -354,7 +354,7 @@ int ishr(Frame * frame) {
   return 0;
 }
 
-int iushr(Frame * frame) {
+int iushr(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u4 value1 = remove_from_stack(frame);
   u4 result = value1 >> (u4_to_int(value2) & 0x1f);
@@ -363,7 +363,7 @@ int iushr(Frame * frame) {
   return 0;
 }
 
-int lshl(Frame * frame) {
+int lshl(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u8 value1_low = (u8) remove_from_stack(frame);
   u8 value1_high = (u8) remove_from_stack(frame);
@@ -379,7 +379,7 @@ int lshl(Frame * frame) {
   return 0;
 }
 
-int lshr(Frame * frame) {
+int lshr(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u8 value1_low = (u8) remove_from_stack(frame);
   u8 value1_high = (u8) remove_from_stack(frame);
@@ -395,7 +395,7 @@ int lshr(Frame * frame) {
   return 0;
 }
 
-int lushr(Frame * frame) {
+int lushr(Frame * frame, Instruction instruction) {
   u4 value2 = remove_from_stack(frame);
   u8 value1_low = (u8) remove_from_stack(frame);
   u8 value1_high = (u8) remove_from_stack(frame);

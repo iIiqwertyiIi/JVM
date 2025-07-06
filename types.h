@@ -147,10 +147,7 @@ typedef struct InstructionType {
     u1 opcode;
     u1 operand_count;
     char * mnemonic;
-    union {
-        int (*opcode_function) (Frame * frame);
-        int (*opcode_function_with_args) (Frame * frame, Instruction instruction);
-    };
+    int (*opcode_function) (Frame * frame, Instruction instruction);
 } InstructionType;
 
 struct Instruction {
@@ -178,19 +175,5 @@ typedef struct FrameStack {
     Frame * top_frame;
 } FrameStack;
 
-/*
-typedef struct InstructionType {
-    u1 opcode;
-    u1 operand_count;
-    char * name;
-    int (*opcode_function)(Frame * frame, Instruction * instruction);
-} InstructionType;
-
-typedef struct Instruction {
-    InstructionType * type;
-    u1 * operands;
-    u2 operand_count;
-} Instruction;
-*/
 
 #endif

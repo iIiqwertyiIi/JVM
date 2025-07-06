@@ -2,48 +2,9 @@
 #include "helper.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include "conversions.h"
 
-// Funções de manipulação da pilha de operandos
-
-u4 remove_from_stack(Frame * frame) {
-    if (frame->stack_top == NULL) {
-        fprintf(stderr, "Erro: Tentativa de remover de pilha vazia\n");
-        return 0;
-    }
-    
-    OperandStack * temp = frame->stack_top;
-    u4 value = temp->self;
-    frame->stack_top = temp->next;
-    frame->stack_size--;
-    free(temp);
-    
-    return value;
-}
-
-void add_to_stack(Frame * frame, u4 value) {
-    OperandStack * new_stack = malloc(sizeof(OperandStack));
-    if (new_stack == NULL) {
-        fprintf(stderr, "Erro: Falha na alocação de memória para pilha\n");
-        return;
-    }
-    
-    new_stack->self = value;
-    new_stack->next = frame->stack_top;
-    frame->stack_top = new_stack;
-    frame->stack_size++;
-}
-
-u4 peek_stack(Frame * frame) {
-    if (frame->stack_top == NULL) {
-        fprintf(stderr, "Erro: Tentativa de acessar pilha vazia\n");
-        return 0;
-    }
-    return frame->stack_top->self;
-}
-
-// Funções de conversão de tipo para instruções da JVM
-
-int double_to_float(Frame * frame) {
+int d2f(Frame * frame, Instruction instruction) {
     // Remove os dois valores da pilha (double ocupa 2 slots)
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
@@ -62,7 +23,7 @@ int double_to_float(Frame * frame) {
     return 0;
 }
 
-int double_to_int(Frame * frame) {
+int d2i(Frame * frame, Instruction instruction) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     
@@ -77,7 +38,7 @@ int double_to_int(Frame * frame) {
     return 0;
 }
 
-int double_to_long(Frame * frame) {
+int d2l(Frame * frame, Instruction instruction) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     
@@ -97,7 +58,7 @@ int double_to_long(Frame * frame) {
     return 0;
 }
 
-int float_to_double(Frame * frame) {
+int f2d(Frame * frame, Instruction instruction) {
     u4 float_bits = remove_from_stack(frame);
     float float_value = u4_to_float(float_bits);
     
@@ -113,7 +74,7 @@ int float_to_double(Frame * frame) {
     return 0;
 }
 
-int float_to_int(Frame * frame) {
+int f2i(Frame * frame, Instruction instruction) {
     u4 float_bits = remove_from_stack(frame);
     float float_value = u4_to_float(float_bits);
     
@@ -125,7 +86,7 @@ int float_to_int(Frame * frame) {
     return 0;
 }
 
-int float_to_long(Frame * frame) {
+int f2l(Frame * frame, Instruction instruction) {
     u4 float_bits = remove_from_stack(frame);
     float float_value = u4_to_float(float_bits);
     
@@ -141,7 +102,7 @@ int float_to_long(Frame * frame) {
     return 0;
 }
 
-int int_to_byte(Frame * frame) {
+int i2b(Frame * frame, Instruction instruction) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -153,7 +114,7 @@ int int_to_byte(Frame * frame) {
     return 0;
 }
 
-int int_to_char(Frame * frame) {
+int i2c(Frame * frame, Instruction instruction) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -165,7 +126,7 @@ int int_to_char(Frame * frame) {
     return 0;
 }
 
-int int_to_double(Frame * frame) {
+int i2d(Frame * frame, Instruction instruction) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -181,7 +142,7 @@ int int_to_double(Frame * frame) {
     return 0;
 }
 
-int int_to_float(Frame * frame) {
+int i2f(Frame * frame, Instruction instruction) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -193,7 +154,7 @@ int int_to_float(Frame * frame) {
     return 0;
 }
 
-int int_to_long(Frame * frame) {
+int i2l(Frame * frame, Instruction instruction) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -209,7 +170,7 @@ int int_to_long(Frame * frame) {
     return 0;
 }
 
-int int_to_short(Frame * frame) {
+int i2s(Frame * frame, Instruction instruction) {
     u4 int_bits = remove_from_stack(frame);
     int32_t int_value = u4_to_int(int_bits);
     
@@ -221,7 +182,7 @@ int int_to_short(Frame * frame) {
     return 0;
 }
 
-int long_to_double(Frame * frame) {
+int l2d(Frame * frame, Instruction instruction) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     
@@ -240,7 +201,7 @@ int long_to_double(Frame * frame) {
     return 0;
 }
 
-int long_to_float(Frame * frame) {
+int l2f(Frame * frame, Instruction instruction) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     
@@ -255,7 +216,7 @@ int long_to_float(Frame * frame) {
     return 0;
 }
 
-int long_to_int(Frame * frame) {
+int l2i(Frame * frame, Instruction instruction) {
     u4 low = remove_from_stack(frame);
     u4 high = remove_from_stack(frame);
     

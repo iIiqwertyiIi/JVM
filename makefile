@@ -1,6 +1,6 @@
 # Configurações do compilador
 CC = gcc
-CFLAGS = -Wall -Wextra -g -std=c99
+CFLAGS = -Wall -g -std=c99
 TARGET = jvm_viewer
 
 # Diretórios
@@ -17,9 +17,11 @@ SRCS = reader.c \
        output.c \
        class_file.c \
        helper.c \
-       stack_operations.c \
+       conversions.c \
 	   logic_instructions.c \
 	   arithmetic_instructions.c \
+	   instructions.c \
+	   load_store.c \
 	   main.c \
 
 # Arquivos objeto
@@ -35,9 +37,11 @@ HEADERS = types.h \
           output.h \
           class_file.h \
           helper.h \
-          stack_operations.h \
+          conversions.h \
 		  logic_instructions.h \
 		  arithmetic_instructions.h \
+		  load_store.h \
+		  instructions.h \
 
 # Regra principal
 all: directories $(TARGET)
@@ -96,9 +100,9 @@ $(OBJ_DIR)/helper.o: helper.c helper.h types.h
 	@echo "Compilando helper.c..."
 	@$(CC) $(CFLAGS) -c helper.c -o $@
 
-$(OBJ_DIR)/stack_operations.o: stack_operations.c stack_operations.h types.h helper.h
-	@echo "Compilando stack_operations.c..."
-	@$(CC) $(CFLAGS) -c stack_operations.c -o $@
+$(OBJ_DIR)/conversions.o: conversions.c conversions.h types.h helper.h
+	@echo "Compilando conversions.c..."
+	@$(CC) $(CFLAGS) -c conversions.c -o $@
 
 $(OBJ_DIR)/logic_instructions.o: logic_instructions.c logic_instructions.h types.h
 	@echo "Compilando logic_instructions.c..."
@@ -107,6 +111,14 @@ $(OBJ_DIR)/logic_instructions.o: logic_instructions.c logic_instructions.h types
 $(OBJ_DIR)/arithmetic_instructions.o: arithmetic_instructions.c arithmetic_instructions.h types.h
 	@echo "Compilando arithmetic_instructions.c..."
 	@$(CC) $(CFLAGS) -c arithmetic_instructions.c -o $@
+
+$(OBJ_DIR)/instructions.o: instructions.c instructions.h types.h
+	@echo "Compilando instructions.c..."
+	@$(CC) $(CFLAGS) -c instructions.c -o $@
+
+$(OBJ_DIR)/load_store.o: load_store.c load_store.h types.h reader.h helper.h
+	@echo "Compilando load_store.c..."
+	@$(CC) $(CFLAGS) -c load_store.c -o $@
 
 # Limpeza
 clean:
