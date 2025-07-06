@@ -19,6 +19,7 @@ SRCS = reader.c \
        helper.c \
        stack_operations.c \
 	   logic_instructions.c \
+	   arithmetic_instructions.c \
 	   main.c \
 
 # Arquivos objeto
@@ -36,6 +37,7 @@ HEADERS = types.h \
           helper.h \
           stack_operations.h \
 		  logic_instructions.h \
+		  arithmetic_instructions.h \
 
 # Regra principal
 all: directories $(TARGET)
@@ -48,7 +50,7 @@ directories:
 # Compilar o executável
 $(TARGET): $(OBJS)
 	@echo "Linkando $@..."
-	@$(CC) $(CFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJS)
+	@$(CC) $(CFLAGS) -o $(BIN_DIR)/$(TARGET) $(OBJS) -lm
 	@echo "Build completo! Executável: $(BIN_DIR)/$(TARGET)"
 
 # Regra genérica para compilar arquivos objeto
@@ -101,6 +103,10 @@ $(OBJ_DIR)/stack_operations.o: stack_operations.c stack_operations.h types.h hel
 $(OBJ_DIR)/logic_instructions.o: logic_instructions.c logic_instructions.h types.h
 	@echo "Compilando logic_instructions.c..."
 	@$(CC) $(CFLAGS) -c logic_instructions.c -o $@
+
+$(OBJ_DIR)/arithmetic_instructions.o: arithmetic_instructions.c arithmetic_instructions.h types.h
+	@echo "Compilando arithmetic_instructions.c..."
+	@$(CC) $(CFLAGS) -c arithmetic_instructions.c -o $@
 
 # Limpeza
 clean:
