@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 #include <stdint.h>
+#include <inttypes.h>
+#include <string.h>
 
 typedef uint8_t u1;
 typedef uint16_t u2;
@@ -147,7 +149,7 @@ typedef struct InstructionType {
     char * mnemonic;
     union {
         int (*opcode_function) (Frame * frame);
-        int (*opcode_function) (Frame * frame, Instruction instruction);
+        int (*opcode_function_with_args) (Frame * frame, Instruction instruction);
     };
 } InstructionType;
 
@@ -158,7 +160,7 @@ struct Instruction {
 
 typedef struct OperandStack {
     u4 self;
-    OperandStack * next;
+    struct OperandStack * next;
 } OperandStack;
 
 struct Frame {
@@ -175,5 +177,20 @@ typedef struct FrameStack {
     u4 stack_size;
     Frame * top_frame;
 } FrameStack;
+
+/*
+typedef struct InstructionType {
+    u1 opcode;
+    u1 operand_count;
+    char * name;
+    int (*opcode_function)(Frame * frame, Instruction * instruction);
+} InstructionType;
+
+typedef struct Instruction {
+    InstructionType * type;
+    u1 * operands;
+    u2 operand_count;
+} Instruction;
+*/
 
 #endif

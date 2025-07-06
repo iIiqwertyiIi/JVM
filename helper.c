@@ -68,9 +68,3 @@ u8 double_to_u8(double value) {
     converterU8Double.d = value;
     return converterU8Double.u8;
 }
-
-
-
-
-
-
