@@ -8,6 +8,8 @@ typedef uint8_t u1;
 typedef uint16_t u2;
 typedef uint32_t u4;
 typedef uint64_t u8;
+typedef struct Frame Frame;
+typedef struct Instruction Instruction;
 
 typedef struct Buffer {
     u1 * buffer;
@@ -141,20 +143,35 @@ typedef struct ClassFileBuffer {
     ClassFile * buffer;
 } ClassFileBuffer;
 
+typedef struct InstructionType {
+    u1 opcode;
+    u1 operand_count;
+    char * mnemonic;
+    union {
+        int (*opcode_function) (Frame * frame);
+        int (*opcode_function_with_args) (Frame * frame, Instruction instruction);
+    };
+} InstructionType;
+
+struct Instruction {
+    InstructionType * type;
+    u1 * operands;
+};
+
 typedef struct OperandStack {
     u4 self;
     struct OperandStack * next;
 } OperandStack;
 
-typedef struct Frame {
+struct Frame {
     ClassFile * this_class;
     method_info * this_method;
     OperandStack * stack_top;
     u4 stack_size;
     u4 * local_variables;
     Buffer pc;
-    struct Frame * next;
-} Frame;
+    Frame * next;
+};
 
 typedef struct FrameStack {
     u4 stack_size;
