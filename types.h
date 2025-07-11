@@ -175,5 +175,10 @@ typedef struct FrameStack {
     Frame * top_frame;
 } FrameStack;
 
+typedef struct TSwtich {
+    u4 size;
+    int32_t * offsets;
+} TSwtich;
+
 
 #endif
