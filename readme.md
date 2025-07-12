@@ -29,5 +29,8 @@ Define toda a tipagem e interface da JVM. Através desse arquivo, é possível v
 `logic_instructions` e `arithmertic_instructions`
 Possui todas as instruções lógicas e aritméticas implementadas na JVM.
 
+`load_store`
+Possui instruções relacionadas a load e a store implementadas na JVM.
+
 `conversions.c` e `helpers.c`
 Arquivos responsáveis pela conversões de tipos, como *long to double*, por exemplo.
