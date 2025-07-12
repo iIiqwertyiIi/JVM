@@ -3,6 +3,9 @@
 
 #include "types.h"
 #include "load_store.h"
+#include "arithmetic_instructions.h"
+#include "conversions.h"
+#include "logic_instructions.h"
 
 int nop(Frame * frame, Instruction instruction);
 

@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "class_file.h"
+#include "instructions.h"
 
 void print_class_file(ClassFile *class_file);
 
