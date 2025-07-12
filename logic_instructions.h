@@ -1,5 +1,5 @@
-#ifndef INSTRUCTIONS_H
-#define INSTRUCTIONS_H
+#ifndef LOGIC_INSTRUCTIONS_H
+#define LOGIC_INSTRUCTIONS_H
 
 #include "types.h"
 
