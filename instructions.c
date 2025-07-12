@@ -107,16 +107,18 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0x54, 0, "bastore", bastore},
     {0x55, 0, "castore", castore},
     {0x56, 0, "sastore", sastore},
-    //fim das instruções load_store 
-    {0x57, 0, "pop", },
-    {0x58, 0, "pop2", },
-    {0x59, 0, "dup", },
-    {0x5a, 0, "dup_x1", },
-    {0x5b, 0, "dup_x2", },
-    {0x5c, 0, "dup2", },
-    {0x5d, 0, "dup2_x1", },
-    {0x5e, 0, "dup2_x2", },
-    {0x5f, 0, "swap", },
+    //fim das instruções load_store
+    //inicio nao precisam ser implementadas
+    {0x57, 0, "pop", filler},
+    {0x58, 0, "pop2", filler},
+    {0x59, 0, "dup", filler},
+    {0x5a, 0, "dup_x1", filler},
+    {0x5b, 0, "dup_x2", filler},
+    {0x5c, 0, "dup2", filler},
+    {0x5d, 0, "dup2_x1", filler},
+    {0x5e, 0, "dup2_x2", filler},
+    {0x5f, 0, "swap", filler},
+    // fim nao precisam ser implementadas
     //inicio instrucoes aritméticas
     {0x60, 0, "iadd", iadd},
     {0x61, 0, "ladd", ladd},
@@ -149,12 +151,15 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0x7c, 0, "iushr", iushr},
     {0x7d, 0, "lushr", lushr},
     //fim instrucoes aritmeticas
+    //inicio instrucoes logicas
     {0x7e, 0, "iand", },
     {0x7f, 0, "land", },
     {0x80, 0, "ior", },
     {0x81, 0, "lor", },
     {0x82, 0, "ixor", },
     {0x83, 0, "lxor", },
+    //fim instrucoes logicas
+    //incremento
     {0x84, 2, "iinc", },
     //inicio instrucoes conversoes
     {0x85, 0, "i2l", i2l},
@@ -173,6 +178,7 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0x92, 0, "i2c", i2c},
     {0x93, 0, "i2s", i2s},
     //fim instrucoes conversion
+    //incio das instrucoes comparativas
     {0x94, 0, "lcmp", },
     {0x95, 0, "fcmpl", },
     {0x96, 0, "fcmpg", },
@@ -194,6 +200,7 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0xa6, 2, "if_acmpne", },
     {0xa7, 2, "goto", },
     {0xa8, 2, "jsr", },
+    //fim das instrucoes comparativas
     {0xa9, 1, "ret", },
     {0xaa, 0, "tableswitch", },
     {0xab, 0, "lookupswitch", },
@@ -216,11 +223,13 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0xbc, 1, "newarray", },
     {0xbd, 2, "anewarray", },
     {0xbe, 0, "arraylength", },
-    {0xbf, 0, "athrow", },
-    {0xc0, 2, "checkcast", },
-    {0xc1, 2, "instanceof", },
-    {0xc2, 0, "monitorenter", },
-    {0xc3, 0, "monitorexit", },
+    //inicio nao precisam ser implementadas
+    {0xbf, 0, "athrow", filler},
+    {0xc0, 2, "checkcast", filler},
+    {0xc1, 2, "instanceof", filler},
+    {0xc2, 0, "monitorenter", filler},
+    {0xc3, 0, "monitorexit", filler},
+    //fim nao precisam ser implementadas
     {0xc4, 0, "wide", },
     {0xc5, 3, "multianewarray", },
     {0xc6, 2, "ifnull", },

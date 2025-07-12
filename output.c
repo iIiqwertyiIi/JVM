@@ -448,7 +448,7 @@ AttributeType get_attribute_type(const char *name) {
     return ATTR_UNKNOWN;
 }
 
-
+//TODO: adicione tableswitch e lookupswitch
 void print_code(u1* code, u4 code_length) {
     printf("          Code:\n");
     for (u4 i = 0; i < code_length; ) {
