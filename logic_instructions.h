@@ -1,54 +1,60 @@
-#ifndef INSTRUCTIONS_H
-#define INSTRUCTIONS_H
+#ifndef LOGICAL_H
+#define LOGICAL_H
 
+#include <stdint.h>
 #include "types.h"
+#include "instructions.h"
 
-// Opcodes para as operações lógicas
-#define IXOR        0x82    // XOR inteiro
-#define IOR         0x80    // OR inteiro  
-#define IAND        0x7E    // AND inteiro
-#define INOT        0x74    // NOT inteiro 
+int iand(Frame * frame, Instruction Instruction);
 
-// Opcodes para comparações 
-#define IF_ICMPEQ   0x9F    // Jump if ints equal
-#define IF_ICMPNE   0xA0    // Jump if ints not equal
-#define IF_ICMPLT   0xA1    // Jump if int1 < int2
-#define IF_ICMPGE   0xA2    // Jump if int1 >= int2
-#define IF_ICMPGT   0xA3    // Jump if int1 > int2
-#define IF_ICMPLE   0xA4    // Jump if int1 <= int2
 
-// Opcodes para comparação de referências
-#define IF_ACMPEQ   0xA5    // Jump if references equal
-#define IF_ACMPNE   0xA6    // Jump if references not equal
+int ior(Frame * frame, Instruction Instruction);
 
-// Operações lógicas básicas
-void instruction_ixor(FrameStack* frame_stack);
-void instruction_ior(FrameStack* frame_stack);
-void instruction_iand(FrameStack* frame_stack);
-void instruction_inot(FrameStack* frame_stack);
 
-// Operações de comparação e salto
-void instruction_if_icmpeq(FrameStack* frame_stack, int16_t branch_offset);
-void instruction_if_icmpne(FrameStack* frame_stack, int16_t branch_offset);
-void instruction_if_icmplt(FrameStack* frame_stack, int16_t branch_offset);
-void instruction_if_icmpge(FrameStack* frame_stack, int16_t branch_offset);
-void instruction_if_icmpgt(FrameStack* frame_stack, int16_t branch_offset);
-void instruction_if_icmple(FrameStack* frame_stack, int16_t branch_offset);
+int ixor(Frame * frame, Instruction Instruction);
 
-// Comparação de referências
-void instruction_if_acmpeq(FrameStack* frame_stack, int16_t branch_offset);
-void instruction_if_acmpne(FrameStack* frame_stack, int16_t branch_offset);
+int inot(Frame * frame, Instruction Instruction);
 
-// Funções auxiliares para manipular a pilha de operandos
-void push_int(FrameStack* frame_stack, int32_t value);
-int32_t pop_int(FrameStack* frame_stack);
-void push_ref(FrameStack* frame_stack, u4 ref);
-u4 pop_ref(FrameStack* frame_stack);
 
-// Função para executar uma instrução específica
-int execute_instruction(FrameStack* frame_stack, u1 opcode, u1* bytecode, u8* pc);
+int if_icmpeq(Frame * frame, Instruction Instruction);
 
-// Função auxiliar para debug
-void print_operand_stack(FrameStack* frame_stack, int max_elements);
 
-#endif 
+int if_icmpgt(Frame * frame, Instruction Instruction);
+
+
+int if_icmpge(Frame * frame, Instruction Instruction);
+
+
+int if_icmplt(Frame * frame, Instruction Instruction);
+
+
+int if_icmple(Frame * frame, Instruction Instruction);
+
+
+int if_icmpne(Frame * frame, Instruction Instruction);
+
+
+
+int if_acmpeq(Frame * frame, Instruction Instruction);
+
+
+int if_acmpne(Frame * frame, Instruction Instruction);
+
+
+
+int ifeq(Frame * frame, Instruction Instruction);
+
+
+int ifne(Frame * frame, Instruction Instruction);
+
+int ifgt(Frame * frame, Instruction Instruction);
+
+
+int ifge(Frame * frame, Instruction Instruction);
+
+int iflt(Frame * frame, Instruction Instruction);
+
+
+int ifle(Frame * frame, Instruction Instruction);
+
+#endif // LOGICAL_H
