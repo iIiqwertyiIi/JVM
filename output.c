@@ -454,20 +454,18 @@ void print_code(u1* code, u4 code_length) {
     for (u4 i = 0; i < code_length; ) {
         printf("            %u: ", i);
         u1 opcode = code[i];
-        switch (opcode) {
-            case 0x2a: printf("aload_0\n"); i += 1; break;
-            case 0x2b: printf("aload_1\n"); i += 1; break;
-            case 0xb1: printf("return\n"); i += 1; break;
-            case 0xb2: printf("getstatic #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
-            case 0x12: printf("ldc #%u\n", code[i+1]); i += 2; break;
-            case 0xb6: printf("invokevirtual #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
-            case 0xb7: printf("invokespecial #%u\n", (code[i+1] << 8) | code[i+2]); i += 3; break;
-            
-            default:
-                printf("opcode 0x%02x (não implementado)\n", opcode);
-                i += 1;
-                break;
-        }
+        InstructionType *instruction = get_instruction_type(opcode);
+
+       if(!!instruction->mnemonic)
+       {
+            printf("%s\n", instruction->mnemonic);
+            i += instruction->operand_count + 1;
+       }
+       else
+       {
+            printf("opcode 0x%02x (não implementado)\n", opcode);
+            i++;
+       }
     }
 }
 void print_attribute_info(attribute_info **attributes, u2 attribute_count) {
