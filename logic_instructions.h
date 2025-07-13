@@ -5,11 +5,12 @@
 #include "types.h"
 #include "instructions.h"
 
+int if_icmpeq(Frame * frame, Instruction instruction);
 int iand(Frame * frame, Instruction Instruction);
 int ior(Frame * frame, Instruction Instruction);
 int ixor(Frame * frame, Instruction Instruction);
 int inot(Frame * frame, Instruction Instruction);
-int if_icmpeq(Frame * frame, Instruction Instruction);
+int inot(Frame * frame, Instruction Instruction);
 int if_icmpgt(Frame * frame, Instruction Instruction);
 int if_icmpge(Frame * frame, Instruction Instruction);
 int if_icmplt(Frame * frame, Instruction Instruction);
@@ -23,5 +24,6 @@ int ifgt(Frame * frame, Instruction Instruction);
 int ifge(Frame * frame, Instruction Instruction);
 int iflt(Frame * frame, Instruction Instruction);
 int ifle(Frame * frame, Instruction Instruction);
+int goto_(Frame * frame, Instruction instruction);
 
-#endi
+#endif
