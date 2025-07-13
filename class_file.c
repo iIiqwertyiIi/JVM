@@ -6,7 +6,10 @@
 #include "constant_pool.h"
 
 ClassFileBuffer * get_class_file_buffer() {
-    static ClassFileBuffer class_file;
+    static ClassFileBuffer class_file = {
+        .buffer = NULL,
+        .size = 0
+    };
     return &class_file;
 }
 
