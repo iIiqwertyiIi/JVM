@@ -32,12 +32,9 @@ int jsr(Frame * frame, Instruction Instruction);
 int jsr_w(Frame * frame, Instruction Instruction);
 int goto_(Frame * frame, Instruction instruction);
 int goto_w(Frame * frame, Instruction instruction);
-
-
 int land(Frame * frame, Instruction instruction);
 int lor(Frame * frame, Instruction instruction);
 int lxor(Frame * frame, Instruction instruction);
-
 int lcmp(Frame * frame, Instruction instruction);
 int fcmpl(Frame * frame, Instruction instruction);
 int fcmpg(Frame * frame, Instruction instruction);
