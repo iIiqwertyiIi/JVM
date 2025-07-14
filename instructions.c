@@ -153,23 +153,27 @@ InstructionType * get_instruction_type(u1 opcode) {
     //fim instrucoes aritmeticas
     //inicio instrucoes logicas
     {0x7e, 0, "iand", iand},
-    {0x7f, 0, "land", },
     {0x80, 0, "ior", ior},
-    {0x81, 0, "lor", },
     {0x82, 0, "ixor", ixor},
-    {0x83, 0, "lxor", },
 
     // pra long
-    {0x7f, 0, "land", },     
-    {0x81, 0, "lor", },      
-    {0x83, 0, "lxor", },     
+    {0x7f, 0, "land", land},
+    {0x82, 0, "lxor", lxor},
+    {0x80, 0, "lor", lor},
+    {0x94, 0, "lcmp", lcmp},
+    
+        
 
     // comparacao
-    {0x94, 0, "lcmp", },     
-    {0x95, 0, "fcmpl", },    
-    {0x96, 0, "fcmpg", },    
-    {0x97, 0, "dcmpl", },    
-    {0x98, 0, "dcmpg", },    
+    {0x95, 0, "fcmpl", fcmpl},
+    {0x96, 0, "fcmpg", fcmpg},
+    {0x97, 0, "dcmpl", dcmpl},
+    {0x98, 0, "dcmpg", dcmpg},
+    {0xa8, 2, "jsr", jsr},
+    {0xc6, 2, "ifnull", ifnull},
+    {0xc7, 2, "ifnonnull", ifnonnull},
+    {0xc8, 4, "goto_w", goto_w},
+    {0xc9, 4, "jsr_w", jsr_w}, 
     //fim instrucoes logicas
     //incremento
     {0x84, 2, "iinc", },
@@ -191,11 +195,8 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0x93, 0, "i2s", i2s},
     //fim instrucoes conversion
     //incio das instrucoes comparativas
-    {0x94, 0, "lcmp", },
     {0x95, 0, "fcmpl", },
     {0x96, 0, "fcmpg", },
-    {0x97, 0, "dcmpl", },
-    {0x98, 0, "dcmpg", },
     {0x99, 2, "ifeq", ifeq},
     {0x9a, 2, "ifne", ifne},
     {0x9b, 2, "iflt", iflt},
@@ -211,7 +212,6 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0xa5, 2, "if_acmpeq", if_acmpeq},
     {0xa6, 2, "if_acmpne", if_acmpne},
     {0xa7, 2, "goto", goto_},
-    {0xa8, 2, "jsr", },
     //fim das instrucoes comparativas
     {0xa9, 1, "ret", },
     {0xaa, 0, "tableswitch", },
@@ -244,10 +244,6 @@ InstructionType * get_instruction_type(u1 opcode) {
     //fim nao precisam ser implementadas
     {0xc4, 0, "wide", },
     {0xc5, 3, "multianewarray", },
-    {0xc6, 2, "ifnull", },
-    {0xc7, 2, "ifnonnull", },
-    {0xc8, 4, "goto_w", },
-    {0xc9, 4, "jsr_w", },
     // A partir daqui, é apenas para preenchimento, até o 0xfe
     {0xca, 0, "breakpoint", filler},
     {0xcb, 0, "filler1",  filler},

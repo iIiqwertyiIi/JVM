@@ -26,6 +26,7 @@ int ifgt(Frame * frame, Instruction Instruction);
 int ifge(Frame * frame, Instruction Instruction);
 int iflt(Frame * frame, Instruction Instruction);
 int ifle(Frame * frame, Instruction Instruction);
+
 int ifnull(Frame * frame, Instruction Instruction);
 int ifnonnull(Frame * frame, Instruction Instruction);
 int jsr(Frame * frame, Instruction Instruction);
