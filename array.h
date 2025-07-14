@@ -5,7 +5,7 @@
 
 ArrayList * get_array_list();
 u4 add_array(Array * array);
-Array * get_array(uint32_t index)
+Array * get_array(uint32_t index);
 
 int newarray(Frame * frame, Instruction instruction);
 int anewarray(Frame * frame, Instruction instruction);
