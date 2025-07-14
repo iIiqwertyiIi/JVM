@@ -146,7 +146,7 @@ struct ClassFile {
     attribute_info * * attributes;
     ClassFile * super_class_class;
     u2 static_fields_count;
-    ActiveField * * static_fields
+    ActiveField * * static_fields;
 };
 
 typedef struct ClassFileBuffer {
