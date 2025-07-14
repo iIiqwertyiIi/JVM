@@ -19,6 +19,77 @@ int ior(Frame * frame, Instruction instruction) {
   return 0;
 }
 
+int jsr(Frame * frame, Instruction instruction) {
+  uint32_t return_address = frame->pc.position + 3; // jsr tem 3 bytes (opcode + 2 bytes de offset)
+  add_to_stack(frame, int_to_u4(return_address));
+  
+  int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
+  return offset;
+}
+
+int jsr_w(Frame * frame, Instruction instruction) {
+  uint32_t return_address = frame->pc.position + 5;
+  add_to_stack(frame, int_to_u4(return_address));
+  
+  // Jump para o offset especificado (4 bytes)
+  int32_t offset = (int32_t)((instruction.operands[0] << 24) | 
+                             (instruction.operands[1] << 16) | 
+                             (instruction.operands[2] << 8) | 
+                             instruction.operands[3]);
+  return offset;
+}
+
+int ifnull(Frame * frame, Instruction instruction) {
+  uint32_t value = remove_from_stack(frame);
+  
+  if (value == 0) { // null é representado como 0
+    // Constrói offset signed de 16 bits a partir dos bytes
+    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
+    return offset;
+  }
+  
+  return 0; // Continua execução normal
+}
+
+int ifnonnull(Frame * frame, Instruction instruction) {
+  uint32_t value = remove_from_stack(frame);
+  
+  if (value != 0) { // não é null
+    // Constrói offset signed de 16 bits a partir dos bytes
+    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
+    return offset;
+  }
+  
+  return 0; // Continua execução normal
+}
+
+int goto_(Frame * frame, Instruction instruction) {
+  int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
+  return offset;
+}
+
+int ifeq(Frame * frame, Instruction instruction) {
+  uint32_t value = remove_from_stack(frame);
+  
+  if (u4_to_int(value) == 0) {
+    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
+    return offset;
+  }
+  
+  return 0;
+}
+
+int goto_w(Frame * frame, Instruction instruction) {
+  // Jump incondicional com offset de 4 bytes
+  int32_t offset = (int32_t)((instruction.operands[0] << 24) | 
+                             (instruction.operands[1] << 16) | 
+                             (instruction.operands[2] << 8) | 
+                             instruction.operands[3]);
+  return offset;
+}
+
+
+
 int ixor(Frame * frame, Instruction instruction) {
   uint32_t value2 = remove_from_stack(frame);
   uint32_t value1 = remove_from_stack(frame);
@@ -293,9 +364,6 @@ int lcmp(Frame * frame, Instruction instruction) {
   
   return 0;
 }
-
-// ========== INSTRUÇÕES DE COMPARAÇÃO PARA FLOAT ==========
-
 int fcmpl(Frame * frame, Instruction instruction) {
   uint32_t value2 = remove_from_stack(frame);
   uint32_t value1 = remove_from_stack(frame);
@@ -341,6 +409,7 @@ int fcmpg(Frame * frame, Instruction instruction) {
   
   return 0;
 }
+
 
 
 int dcmpl(Frame * frame, Instruction instruction) {
