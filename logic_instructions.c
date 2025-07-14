@@ -264,21 +264,6 @@ int if_acmpne(Frame * frame, Instruction instruction) {
   return 0;
 }
 
-int goto_(Frame * frame, Instruction instruction) {
-  int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-  return offset;
-}
-
-int ifeq(Frame * frame, Instruction instruction) {
-  uint32_t value = remove_from_stack(frame);
-  
-  if (u4_to_int(value) == 0) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
-  }
-  
-  return 0;
-}
 
 int ifne(Frame * frame, Instruction instruction) {
   uint32_t value = remove_from_stack(frame);
