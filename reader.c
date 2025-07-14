@@ -30,6 +30,12 @@ u1 u1read() {
     return value;
 }
 
+u1 u1read_buffer(Buffer * buffer) {
+    u1 value = buffer->buffer[buffer->position];
+    buffer->position++;
+    return value;
+}
+
 u2 u2read() {
     Buffer * buffer = get_buffer();
     u2 value = buffer->buffer[buffer->position] << 8;
@@ -40,6 +46,15 @@ u2 u2read() {
 
 u4 u4read() {
     Buffer * buffer = get_buffer();
+    u4 value = buffer->buffer[buffer->position] << 24;
+    value |= buffer->buffer[buffer->position + 1] << 16;
+    value |= buffer->buffer[buffer->position + 2] << 8;
+    value |= buffer->buffer[buffer->position + 3];
+    buffer->position += 4;
+    return value;
+}
+
+u4 u4read_buffer(Buffer * buffer) {
     u4 value = buffer->buffer[buffer->position] << 24;
     value |= buffer->buffer[buffer->position + 1] << 16;
     value |= buffer->buffer[buffer->position + 2] << 8;

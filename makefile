@@ -23,6 +23,7 @@ SRCS = reader.c \
 	   instructions.c \
 	   load_store.c \
 	   main.c \
+	   table.c \
 
 # Arquivos objeto
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o)
@@ -42,6 +43,7 @@ HEADERS = types.h \
 		  arithmetic_instructions.h \
 		  load_store.h \
 		  instructions.h \
+		  table.h \
 
 # Regra principal
 all: directories $(TARGET)
@@ -119,6 +121,10 @@ $(OBJ_DIR)/instructions.o: instructions.c instructions.h types.h
 $(OBJ_DIR)/load_store.o: load_store.c load_store.h types.h reader.h helper.h
 	@echo "Compilando load_store.c..."
 	@$(CC) $(CFLAGS) -c load_store.c -o $@
+
+$(OBJ_DIR)/table.o: table.c table.h types.h reader.h instructions.h
+	@echo "Compilando table.c..."
+	@$(CC) $(CFLAGS) -c table.c -o $@
 
 # Limpeza
 clean:
