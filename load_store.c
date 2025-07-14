@@ -299,42 +299,80 @@ int aload_3(Frame * frame, Instruction instruction) {
 }
 
 int iaload(Frame * frame, Instruction instruction) {
-
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    u4 value = array->array[index].uint32;
+    add_to_stack(frame, value);
     return 0;
 }
 
 int laload(Frame * frame, Instruction instruction) {
-    
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    u8 value = long_to_u8(array->array[index].long_);
+    u4 low = (u4) (value & 0xFFFFFFFF);
+    u4 high = (u4) (value >> 32);
+    add_to_stack(frame, high);
+    add_to_stack(frame, low);
     return 0;
 }
 
 int faload(Frame * frame, Instruction instruction) {
-    
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    u4 value = array->array[index].uint32;
+    add_to_stack(frame, value);
     return 0;
 }
 
 int daload(Frame * frame, Instruction instruction) {
-    
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    u8 value = double_to_u8(array->array[index].double_);
+    u4 low = (u4) (value & 0xFFFFFFFF);
+    u4 high = (u4) (value >> 32);
+    add_to_stack(frame, high);
+    add_to_stack(frame, low);
     return 0;
 }
 
 int aaload(Frame * frame, Instruction instruction) {
-    
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    u4 value = array->array[index].reference;
+    add_to_stack(frame, value);
     return 0;
 }
 
 int baload(Frame * frame, Instruction instruction) {
-    
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    u4 value = array->array[index].boolean;
+    add_to_stack(frame, value);
     return 0;
 }
 
 int caload(Frame * frame, Instruction instruction) {
-    
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    u4 value = array->array[index].char_;
+    add_to_stack(frame, value);
     return 0;
 }
 
 int saload(Frame * frame, Instruction instruction) {
-    
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    u4 value = array->array[index].short_;
+    add_to_stack(frame, value);
     return 0;
 }
 
@@ -474,41 +512,77 @@ int astore_3(Frame * frame, Instruction instruction) {
 }
 
 int iastore(Frame * frame, Instruction instruction) {
-
+    u4 value = remove_from_stack(frame);
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    array->array[index].integer = value;
     return 0;
 }
 
 int lastore(Frame * frame, Instruction instruction) {
-    
+    u8 value_low = remove_from_stack(frame);
+    u8 value_high = remove_from_stack(frame);
+    u8 value = value_high << 32 | value_low;
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    array->array[index].long_ = value;
     return 0;
 }
 
 int fastore(Frame * frame, Instruction instruction) {
-    
+    u4 value = remove_from_stack(frame);
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    array->array[index].uint32 = value;
     return 0;
 }
 
 int dastore(Frame * frame, Instruction instruction) {
-    
+    u8 value_low = remove_from_stack(frame);
+    u8 value_high = remove_from_stack(frame);
+    double value = u8_to_double(value_high << 32 | value_low);
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    array->array[index].double_ = value;
     return 0;
 }
 
 int aastore(Frame * frame, Instruction instruction) {
-    
+    u4 value = remove_from_stack(frame);
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    array->array[index].reference = value;
     return 0;
 }
 
 int bastore(Frame * frame, Instruction instruction) {
-    
+    u4 value = remove_from_stack(frame);
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    array->array[index].boolean = value;
     return 0;
 }
 
 int castore(Frame * frame, Instruction instruction) {
-    
+    u4 value = remove_from_stack(frame);
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    array->array[index].char_ = value;
     return 0;
 }
 
 int sastore(Frame * frame, Instruction instruction) {
-    
+    u4 value = remove_from_stack(frame);
+    u4 index = remove_from_stack(frame);
+    u4 arrayref = remove_from_stack(frame);
+    Array * array = get_array(arrayref);
+    array->array[index].short_ = value;
     return 0;
 }

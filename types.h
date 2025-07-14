@@ -196,4 +196,26 @@ typedef struct ObjectList {
     Object * * object;
 } ObjectList;
 
+typedef union ArrayTypes {
+  int8_t char_;
+  int16_t short_;
+  int32_t integer;
+  int64_t long_;
+  uint32_t reference;
+  uint8_t boolean;
+  float float_;
+  double double_;
+  uint32_t uint32;
+} ArrayTypes;
+
+typedef struct Array {
+  uint32_t size;
+  ArrayTypes * array;
+} Array;
+
+typedef struct ArrayList {
+  uint32_t size;
+  Array * * array;
+} ArrayList;
+
 #endif
