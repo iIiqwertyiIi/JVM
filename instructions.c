@@ -158,6 +158,18 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0x81, 0, "lor", },
     {0x82, 0, "ixor", ixor},
     {0x83, 0, "lxor", },
+
+    // pra long
+    {0x7f, 0, "land", },     
+    {0x81, 0, "lor", },      
+    {0x83, 0, "lxor", },     
+
+    // comparacao
+    {0x94, 0, "lcmp", },     
+    {0x95, 0, "fcmpl", },    
+    {0x96, 0, "fcmpg", },    
+    {0x97, 0, "dcmpl", },    
+    {0x98, 0, "dcmpg", },    
     //fim instrucoes logicas
     //incremento
     {0x84, 2, "iinc", },
