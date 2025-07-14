@@ -36,18 +36,77 @@ int inot(Frame * frame, Instruction instruction) {
   return 0;
 }
 
+// ========== INSTRUÇÕES LÓGICAS PARA LONG ==========
+
+int land(Frame * frame, Instruction instruction) {
+  uint64_t value2_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value2_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value2 = value2_high << 32;
+  value2 |= value2_low;
+  uint64_t value1_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value1_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value1 = value1_high << 32;
+  value1 |= value1_low;
+  int64_t resultl = u8_to_long(value1) & u8_to_long(value2);
+  uint64_t result = long_to_u8(resultl);
+  uint32_t result_low = (uint32_t) (result & 0xFFFFFFFF);
+  uint32_t result_high = (uint32_t) (result >> 32);
+  add_to_stack(frame, result_high);
+  add_to_stack(frame, result_low);
+
+  return 0;
+}
+
+int lor(Frame * frame, Instruction instruction) {
+  uint64_t value2_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value2_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value2 = value2_high << 32;
+  value2 |= value2_low;
+  uint64_t value1_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value1_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value1 = value1_high << 32;
+  value1 |= value1_low;
+  int64_t resultl = u8_to_long(value1) | u8_to_long(value2);
+  uint64_t result = long_to_u8(resultl);
+  uint32_t result_low = (uint32_t) (result & 0xFFFFFFFF);
+  uint32_t result_high = (uint32_t) (result >> 32);
+  add_to_stack(frame, result_high);
+  add_to_stack(frame, result_low);
+
+  return 0;
+}
+
+int lxor(Frame * frame, Instruction instruction) {
+  uint64_t value2_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value2_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value2 = value2_high << 32;
+  value2 |= value2_low;
+  uint64_t value1_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value1_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value1 = value1_high << 32;
+  value1 |= value1_low;
+  int64_t resultl = u8_to_long(value1) ^ u8_to_long(value2);
+  uint64_t result = long_to_u8(resultl);
+  uint32_t result_low = (uint32_t) (result & 0xFFFFFFFF);
+  uint32_t result_high = (uint32_t) (result >> 32);
+  add_to_stack(frame, result_high);
+  add_to_stack(frame, result_low);
+
+  return 0;
+}
+
+// ========== INSTRUÇÕES DE COMPARAÇÃO ==========
 
 int if_icmpeq(Frame * frame, Instruction instruction) {
   uint32_t value2 = remove_from_stack(frame);
   uint32_t value1 = remove_from_stack(frame);
   
   if (u4_to_int(value1) == u4_to_int(value2)) {
-    // Retorna o offset para fazer o jump
     int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
     return offset;
   }
   
-  return 0; // Continua execução normal
+  return 0;
 }
 
 int if_icmpgt(Frame * frame, Instruction instruction) {
@@ -110,7 +169,6 @@ int if_icmpne(Frame * frame, Instruction instruction) {
   return 0;
 }
 
-
 int if_acmpeq(Frame * frame, Instruction instruction) {
   uint32_t ref2 = remove_from_stack(frame);
   uint32_t ref1 = remove_from_stack(frame);
@@ -135,12 +193,10 @@ int if_acmpne(Frame * frame, Instruction instruction) {
   return 0;
 }
 
-
 int goto_(Frame * frame, Instruction instruction) {
   int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
   return offset;
 }
-
 
 int ifeq(Frame * frame, Instruction instruction) {
   uint32_t value = remove_from_stack(frame);
@@ -204,6 +260,147 @@ int ifle(Frame * frame, Instruction instruction) {
     int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
     return offset;
   }
+  
+  return 0;
+}
+
+
+int lcmp(Frame * frame, Instruction instruction) {
+  // Remove value2 (long)
+  uint64_t value2_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value2_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value2 = value2_high << 32;
+  value2 |= value2_low;
+  
+  uint64_t value1_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value1_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value1 = value1_high << 32;
+  value1 |= value1_low;
+  
+  int64_t val1 = u8_to_long(value1);
+  int64_t val2 = u8_to_long(value2);
+  
+  int32_t result;
+  if (val1 > val2) {
+    result = 1;
+  } else if (val1 == val2) {
+    result = 0;
+  } else {
+    result = -1;
+  }
+  
+  add_to_stack(frame, int_to_u4(result));
+  
+  return 0;
+}
+
+// ========== INSTRUÇÕES DE COMPARAÇÃO PARA FLOAT ==========
+
+int fcmpl(Frame * frame, Instruction instruction) {
+  uint32_t value2 = remove_from_stack(frame);
+  uint32_t value1 = remove_from_stack(frame);
+  
+  float val1 = u4_to_float(value1);
+  float val2 = u4_to_float(value2);
+  
+  int32_t result;
+  if (isnan(val1) || isnan(val2)) {
+    result = -1; // fcmpl retorna -1 para NaN
+  } else if (val1 > val2) {
+    result = 1;
+  } else if (val1 == val2) {
+    result = 0;
+  } else {
+    result = -1;
+  }
+  
+  add_to_stack(frame, int_to_u4(result));
+  
+  return 0;
+}
+
+int fcmpg(Frame * frame, Instruction instruction) {
+  uint32_t value2 = remove_from_stack(frame);
+  uint32_t value1 = remove_from_stack(frame);
+  
+  float val1 = u4_to_float(value1);
+  float val2 = u4_to_float(value2);
+  
+  int32_t result;
+  if (isnan(val1) || isnan(val2)) {
+    result = 1; // fcmpg retorna 1 para NaN
+  } else if (val1 > val2) {
+    result = 1;
+  } else if (val1 == val2) {
+    result = 0;
+  } else {
+    result = -1;
+  }
+  
+  add_to_stack(frame, int_to_u4(result));
+  
+  return 0;
+}
+
+
+int dcmpl(Frame * frame, Instruction instruction) {
+  // Remove value2 (double)
+  uint64_t value2_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value2_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value2 = value2_high << 32;
+  value2 |= value2_low;
+  
+  // Remove value1 (double)
+  uint64_t value1_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value1_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value1 = value1_high << 32;
+  value1 |= value1_low;
+  
+  double val1 = u8_to_double(value1);
+  double val2 = u8_to_double(value2);
+  
+  int32_t result;
+  if (isnan(val1) || isnan(val2)) {
+    result = -1; // dcmpl retorna -1 para NaN
+  } else if (val1 > val2) {
+    result = 1;
+  } else if (val1 == val2) {
+    result = 0;
+  } else {
+    result = -1;
+  }
+  
+  add_to_stack(frame, int_to_u4(result));
+  
+  return 0;
+}
+
+int dcmpg(Frame * frame, Instruction instruction) {
+  uint64_t value2_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value2_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value2 = value2_high << 32;
+  value2 |= value2_low;
+  
+  uint64_t value1_low = (uint64_t) remove_from_stack(frame);
+  uint64_t value1_high = (uint64_t) remove_from_stack(frame);
+  uint64_t value1 = value1_high << 32;
+  value1 |= value1_low;
+  
+  double val1 = u8_to_double(value1);
+  double val2 = u8_to_double(value2);
+  
+  int32_t result;
+  if (isnan(val1) || isnan(val2)) {
+    result = 1; // dcmpg retorna 1 para NaN
+  } else if (val1 > val2) {
+    result = 1;
+  } else if (val1 == val2) {
+    result = 0;
+  } else {
+    result = -1;
+  }
+  
+  add_to_stack(frame, int_to_u4(result));
   
   return 0;
 }
