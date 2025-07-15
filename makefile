@@ -25,6 +25,7 @@ SRCS = reader.c \
 	   array.c \
 	   interpreter.c \
 	   object.c \
+	   method_invocation.c \
 	   main.c \
 	   table.c \
 
@@ -49,6 +50,7 @@ HEADERS = types.h \
 	      interpreter.h \
 	      object.h \
 		  instructions.h \
+		  method_invocation.h \
 		  table.h \
 
 # Regra principal
@@ -142,6 +144,10 @@ $(OBJ_DIR)/object.o: object.c object.h types.h interpreter.h instructions.h
 $(OBJ_DIR)/table.o: table.c table.h types.h reader.h instructions.h
 	@echo "Compilando table.c..."
 	@$(CC) $(CFLAGS) -c table.c -o $@
+
+$(OBJ_DIR)/method_invocation.o: method_invocation.c method_invocation.h types.h interpreter.h instructions.h
+	@echo "Compilando method_invocation.c..."
+	@$(CC) $(CFLAGS) -c method_invocation.c -o $@
 
 # Limpeza
 clean:
