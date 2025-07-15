@@ -26,6 +26,7 @@ SRCS = reader.c \
 	   interpreter.c \
 	   object.c \
 	   main.c \
+	   table.c \
 
 # Arquivos objeto
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o)
@@ -48,6 +49,7 @@ HEADERS = types.h \
 	      interpreter.h \
 	      object.h \
 		  instructions.h \
+		  table.h \
 
 # Regra principal
 all: directories $(TARGET)
@@ -137,6 +139,9 @@ $(OBJ_DIR)/interpreter.o: interpreter.c interpreter.h types.h class_file.h
 $(OBJ_DIR)/object.o: object.c object.h types.h interpreter.h instructions.h
 	@echo "Compilando object.c..."
 	@$(CC) $(CFLAGS) -c object.c -o $@
+$(OBJ_DIR)/table.o: table.c table.h types.h reader.h instructions.h
+	@echo "Compilando table.c..."
+	@$(CC) $(CFLAGS) -c table.c -o $@
 
 # Limpeza
 clean:

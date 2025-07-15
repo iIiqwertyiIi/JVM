@@ -153,11 +153,11 @@ InstructionType * get_instruction_type(u1 opcode) {
     //fim instrucoes aritmeticas
     //inicio instrucoes logicas
     {0x7e, 0, "iand", iand},
-    {0x7f, 0, "land", },
+    {0x7f, 0, "land", land},
     {0x80, 0, "ior", ior},
-    {0x81, 0, "lor", },
+    {0x81, 0, "lor",lor},
     {0x82, 0, "ixor", ixor},
-    {0x83, 0, "lxor", },
+    {0x83, 0, "lxor", lxor},    
     //fim instrucoes logicas
     //incremento
     {0x84, 2, "iinc", },
@@ -179,11 +179,11 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0x93, 0, "i2s", i2s},
     //fim instrucoes conversion
     //incio das instrucoes comparativas
-    {0x94, 0, "lcmp", },
-    {0x95, 0, "fcmpl", },
-    {0x96, 0, "fcmpg", },
-    {0x97, 0, "dcmpl", },
-    {0x98, 0, "dcmpg", },
+    {0x94, 0, "lcmp", lcmp},
+    {0x95, 0, "fcmpl",fcmpl },
+    {0x96, 0, "fcmpg", fcmpg},
+    {0x97, 0, "dcmpl", dcmpl},
+    {0x98, 0, "dcmpg", dcmpg},
     {0x99, 2, "ifeq", ifeq},
     {0x9a, 2, "ifne", ifne},
     {0x9b, 2, "iflt", iflt},
@@ -199,7 +199,7 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0xa5, 2, "if_acmpeq", if_acmpeq},
     {0xa6, 2, "if_acmpne", if_acmpne},
     {0xa7, 2, "goto", goto_},
-    {0xa8, 2, "jsr", },
+    {0xa8, 2, "jsr", jsr},
     //fim das instrucoes comparativas
     {0xa9, 1, "ret", },
     {0xaa, 0, "tableswitch", },

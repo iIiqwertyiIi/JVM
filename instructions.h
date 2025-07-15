@@ -9,6 +9,7 @@
 #include "object.h"
 #include "array.h"
 
+
 int nop(Frame * frame, Instruction instruction);
 
 InstructionType * get_instruction_type(u1 opcode);

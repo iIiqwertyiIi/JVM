@@ -186,6 +186,11 @@ typedef struct FrameStack {
     Frame * top_frame;
 } FrameStack;
 
+typedef struct TSwtich {
+    u4 size;
+    int32_t * offsets;
+} TSwtich;
+
 typedef struct Object {
     ClassFile * class;
     ActiveField * * fields;
