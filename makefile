@@ -22,6 +22,9 @@ SRCS = reader.c \
 	   arithmetic_instructions.c \
 	   instructions.c \
 	   load_store.c \
+	   array.c \
+	   interpreter.c \
+	   object.c \
 	   main.c \
 	   table.c \
 
@@ -42,6 +45,9 @@ HEADERS = types.h \
 		  logic_instructions.h \
 		  arithmetic_instructions.h \
 		  load_store.h \
+		  array.h \
+	      interpreter.h \
+	      object.h \
 		  instructions.h \
 		  table.h \
 
@@ -122,6 +128,17 @@ $(OBJ_DIR)/load_store.o: load_store.c load_store.h types.h reader.h helper.h
 	@echo "Compilando load_store.c..."
 	@$(CC) $(CFLAGS) -c load_store.c -o $@
 
+$(OBJ_DIR)/array.o: array.c array.h types.h instructions.h
+	@echo "Compilando array.c..."
+	@$(CC) $(CFLAGS) -c array.c -o $@
+
+$(OBJ_DIR)/interpreter.o: interpreter.c interpreter.h types.h class_file.h
+	@echo "Compilando interpreter.c..."
+	@$(CC) $(CFLAGS) -c interpreter.c -o $@
+
+$(OBJ_DIR)/object.o: object.c object.h types.h interpreter.h instructions.h
+	@echo "Compilando object.c..."
+	@$(CC) $(CFLAGS) -c object.c -o $@
 $(OBJ_DIR)/table.o: table.c table.h types.h reader.h instructions.h
 	@echo "Compilando table.c..."
 	@$(CC) $(CFLAGS) -c table.c -o $@

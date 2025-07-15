@@ -5,6 +5,7 @@
 #include "instructions.h"
 #include "reader.h"
 #include "helper.h"
+#include "array.h"
 
 int aconst_null(Frame * frame, Instruction instruction);
 int iconst_m1(Frame * frame, Instruction instruction);

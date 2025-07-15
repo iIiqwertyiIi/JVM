@@ -10,6 +10,7 @@ typedef uint32_t u4;
 typedef uint64_t u8;
 typedef struct Frame Frame;
 typedef struct Instruction Instruction;
+typedef struct ClassFile ClassFile;
 
 typedef struct Buffer {
     u1 * buffer;
@@ -120,7 +121,13 @@ typedef struct method_info {
     attribute_info ** attributes;
 } method_info;
 
-typedef struct ClassFile {
+typedef struct ActiveField {
+    field_info * field;
+    u4 value;
+    u4 extra;
+} ActiveField;
+
+struct ClassFile {
     u4 magic;
     u2 minor_version;
     u2 major_version;
@@ -137,10 +144,14 @@ typedef struct ClassFile {
     method_info * * methods;
     u2 attributes_count;
     attribute_info * * attributes;
-} ClassFile;
+    ClassFile * super_class_class;
+    u2 static_fields_count;
+    ActiveField * * static_fields;
+};
 
 typedef struct ClassFileBuffer {
-    ClassFile * buffer;
+    ClassFile * * buffer;
+    u4 size;
 } ClassFileBuffer;
 
 typedef struct InstructionType {
@@ -180,5 +191,36 @@ typedef struct TSwtich {
     int32_t * offsets;
 } TSwtich;
 
+typedef struct Object {
+    ClassFile * class;
+    ActiveField * * fields;
+} Object;
+
+typedef struct ObjectList {
+    u4 size;
+    Object * * object;
+} ObjectList;
+
+typedef union ArrayTypes {
+  int8_t char_;
+  int16_t short_;
+  int32_t integer;
+  int64_t long_;
+  uint32_t reference;
+  uint8_t boolean;
+  float float_;
+  double double_;
+  uint32_t uint32;
+} ArrayTypes;
+
+typedef struct Array {
+  uint32_t size;
+  ArrayTypes * array;
+} Array;
+
+typedef struct ArrayList {
+  uint32_t size;
+  Array * * array;
+} ArrayList;
 
 #endif

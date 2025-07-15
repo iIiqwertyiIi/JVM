@@ -6,15 +6,29 @@
 #include "constant_pool.h"
 
 ClassFileBuffer * get_class_file_buffer() {
-    static ClassFileBuffer class_file;
+    static ClassFileBuffer class_file = {
+        .buffer = NULL,
+        .size = 0
+    };
     return &class_file;
+}
+
+
+void pushToClassFileList(ClassFile * class_file) {
+  ClassFileBuffer * class_file_list = get_class_file_buffer();
+  class_file_list->size++;
+  if (class_file_list->buffer == NULL) {
+    class_file_list->buffer = malloc(sizeof(ClassFile *) * class_file_list->size);
+  } else {
+    class_file_list->buffer = realloc(class_file_list->buffer, sizeof(ClassFile *) * class_file_list->size);
+  }
+  class_file_list->buffer[class_file_list->size - 1] = class_file;
 }
 
 ClassFile * read_class_file() {
     printf("Lendo arquivo..... \n");
     ClassFile * class_file = malloc(sizeof(ClassFile));
-    ClassFileBuffer * class_buffer = get_class_file_buffer();
-    class_buffer->buffer = class_file;
+    pushToClassFileList(class_file);
     if (class_file == NULL) {
         printf("Erro: classe não carregada.\n");
         return NULL;
