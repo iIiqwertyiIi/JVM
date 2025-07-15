@@ -15,6 +15,7 @@ uint32_t remove_from_stack(Frame * frame) {
   frame->stack_top = stack->next;
   free(stack);
   return value;
+  
 }
 
 InstructionType * get_instruction_type(u1 opcode) {
