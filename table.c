@@ -1,6 +1,6 @@
 #include "table.h"
 
-int table_switch(Frame * frame, Instruction instruction) {
+int tableswitch(Frame * frame, Instruction instruction) {
   const u4 start = frame->pc.position - 1;
   const u1 padding = 3 - (start % 4);
   for (int i = 0; i < padding; i++) {

@@ -5,7 +5,7 @@
 #include "instructions.h"
 #include "reader.h"
 
-int table_switch(Frame * frame, Instruction instruction);
-int lookup_switch(Frame * frame, Instruction instruction);
+int tableswitch(Frame * frame, Instruction instruction);
+int lookupswitch(Frame * frame, Instruction instruction);
 
 #endif // TABLE_H

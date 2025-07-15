@@ -202,8 +202,8 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0xa8, 2, "jsr", jsr},
     //fim das instrucoes comparativas
     {0xa9, 1, "ret", },
-    {0xaa, 0, "tableswitch", },
-    {0xab, 0, "lookupswitch", },
+    {0xaa, 0, "tableswitch", tableswitch},
+    {0xab, 0, "lookupswitch", lookupswitch},
     {0xac, 0, "ireturn", },
     {0xad, 0, "lreturn", },
     {0xae, 0, "freturn", },
@@ -232,10 +232,10 @@ InstructionType * get_instruction_type(u1 opcode) {
     //fim nao precisam ser implementadas
     {0xc4, 0, "wide", },
     {0xc5, 3, "multianewarray", multianewarray},
-    {0xc6, 2, "ifnull", },
-    {0xc7, 2, "ifnonnull", },
-    {0xc8, 4, "goto_w", },
-    {0xc9, 4, "jsr_w", },
+    {0xc6, 2, "ifnull", ifnull},
+    {0xc7, 2, "ifnonnull", ifnonnull},
+    {0xc8, 4, "goto_w", goto_w},
+    {0xc9, 4, "jsr_w", jsr_w},
     // A partir daqui, é apenas para preenchimento, até o 0xfe
     {0xca, 0, "breakpoint", filler},
     {0xcb, 0, "filler1",  filler},
