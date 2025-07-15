@@ -25,6 +25,7 @@ SRCS = reader.c \
 	   array.c \
 	   interpreter.c \
 	   object.c \
+	   method_invocation.c \
 	   main.c \
 
 # Arquivos objeto
@@ -48,6 +49,7 @@ HEADERS = types.h \
 	      interpreter.h \
 	      object.h \
 		  instructions.h \
+		  method_invocation.h \
 
 # Regra principal
 all: directories $(TARGET)
@@ -137,6 +139,10 @@ $(OBJ_DIR)/interpreter.o: interpreter.c interpreter.h types.h class_file.h
 $(OBJ_DIR)/object.o: object.c object.h types.h interpreter.h instructions.h
 	@echo "Compilando object.c..."
 	@$(CC) $(CFLAGS) -c object.c -o $@
+
+$(OBJ_DIR)/method_invocation.o: method_invocation.c method_invocation.h types.h interpreter.h instructions.h
+	@echo "Compilando method_invocation.c..."
+	@$(CC) $(CFLAGS) -c method_invocation.c -o $@
 
 # Limpeza
 clean:

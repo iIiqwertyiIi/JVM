@@ -8,6 +8,7 @@
 #include "logic_instructions.h"
 #include "object.h"
 #include "array.h"
+#include "method_invocation.h"
 
 int nop(Frame * frame, Instruction instruction);
 

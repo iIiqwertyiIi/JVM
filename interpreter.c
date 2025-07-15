@@ -9,4 +9,5 @@ ClassFile * get_class_file(char * class_name) {
             return class_file;
         }
     }
+    return NULL; // Retorna NULL se não encontrar
 }

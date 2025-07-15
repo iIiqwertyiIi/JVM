@@ -17,7 +17,7 @@ ClassFile * read_class_file() {
     printf("Lendo arquivo..... \n");
     ClassFile * class_file = malloc(sizeof(ClassFile));
     ClassFileBuffer * class_buffer = get_class_file_buffer();
-    class_buffer->buffer = class_file;
+    class_buffer->buffer = &class_file;
     if (class_file == NULL) {
         printf("Erro: classe não carregada.\n");
         return NULL;
