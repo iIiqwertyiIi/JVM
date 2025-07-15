@@ -53,7 +53,6 @@ int arraylength(Frame * frame, Instruction instruction) {
 }
 
 int multianewarray(Frame * frame, Instruction instruction) {
-    u1 dimensions = instruction.operands[2];
     u4 size_2 = remove_from_stack(frame);
     u4 size_1 = remove_from_stack(frame);
 
