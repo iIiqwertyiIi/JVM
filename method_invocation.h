@@ -3,6 +3,11 @@
 
 #include "types.h"
 #include "class_file.h"
+#include "interpreter.h"
+#include "instructions.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 // Estrutura para armazenar informações de um método resolvido
 typedef struct ResolvedMethod {

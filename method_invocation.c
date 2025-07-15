@@ -1,8 +1,4 @@
 #include "method_invocation.h"
-#include "interpreter.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 // Variável global para a pilha de frames
 static FrameStack frame_stack = {0, NULL};
@@ -12,7 +8,7 @@ char* get_utf8_string(cp_info** constant_pool, u2 index) {
     if (index == 0 || index > 65535) return NULL;
     cp_info* entry = constant_pool[index - 1];
     if (entry->tag == CONSTANT_Utf8) {
-        return entry->Utf8.bytes;
+        return (char *) entry->Utf8.bytes;
     }
     return NULL;
 }
@@ -202,8 +198,7 @@ int invokevirtual(Frame* frame, Instruction instruction) {
         return -1;
     }
     
-    // Remove o objeto da pilha (receiver)
-    u4 receiver = remove_from_stack(frame);
+    remove_from_stack(frame);
     
     // Cria um novo frame para o método chamado
     Frame* new_frame = create_frame(resolved->class, resolved->method);
@@ -243,8 +238,7 @@ int invokespecial(Frame* frame, Instruction instruction) {
         return -1;
     }
     
-    // Remove o objeto da pilha (receiver)
-    u4 receiver = remove_from_stack(frame);
+    remove_from_stack(frame);
     
     // Cria um novo frame para o método chamado
     Frame* new_frame = create_frame(resolved->class, resolved->method);
@@ -304,8 +298,8 @@ int invokestatic(Frame* frame, Instruction instruction) {
 
 int invokeinterface(Frame* frame, Instruction instruction) {
     u2 interface_methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
-    u1 count = instruction.operands[2]; // Número de argumentos
-    u1 zero = instruction.operands[3];  // Sempre zero
+    //u1 count = instruction.operands[2]; 
+    //u1 zero = instruction.operands[3]; 
     
     // Resolve o método da interface
     ResolvedMethod* resolved = resolve_interface_method(frame->this_class, interface_methodref_index);
@@ -314,8 +308,7 @@ int invokeinterface(Frame* frame, Instruction instruction) {
         return -1;
     }
     
-    // Remove o objeto da pilha (receiver)
-    u4 receiver = remove_from_stack(frame);
+    remove_from_stack(frame);
     
     // Cria um novo frame para o método chamado
     Frame* new_frame = create_frame(resolved->class, resolved->method);
