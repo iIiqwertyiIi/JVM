@@ -3,6 +3,19 @@
 // Variável global para a pilha de frames
 static FrameStack frame_stack = {0, NULL};
 
+// Função para liberar completamente um frame
+void free_frame(Frame* frame) {
+    if (frame->local_variables) free(frame->local_variables);
+    // Libera operand stack
+    OperandStack* op = frame->stack_top;
+    while (op) {
+        OperandStack* next = op->next;
+        free(op);
+        op = next;
+    }
+    free(frame);
+} 
+
 // Função para obter string UTF-8 do constant pool
 char* get_utf8_string(cp_info** constant_pool, u2 index) {
     if (index == 0 || index > 65535) return NULL;
@@ -214,7 +227,7 @@ void execute_method(Frame* frame) {
         Instruction instruction = { type, operands };
 
         // Executa a instrução
-        int result = type->opcode_function(frame, instruction);
+        type->opcode_function(frame, instruction);
 
         // Atualiza o PC
         if (type->operand_count > 0) {
@@ -539,17 +552,3 @@ int count_method_arguments(const char* descriptor) {
     return count;
 } 
 
-// Função para liberar completamente um frame
-void free_frame(Frame* frame) {
-    if (!frame) return;
-    // Libera variáveis locais
-    if (frame->local_variables) free(frame->local_variables);
-    // Libera operand stack
-    OperandStack* op = frame->stack_top;
-    while (op) {
-        OperandStack* next = op->next;
-        free(op);
-        op = next;
-    }
-    free(frame);
-} 

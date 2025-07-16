@@ -7,8 +7,6 @@
 #include "object.h"
 #include "method_invocation.h"
 
-// Adicionar declaração de free_frame
-void free_frame(Frame* frame);
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -44,7 +42,7 @@ int main(int argc, char** argv) {
     // Executa o método main
     execute_method(main_frame);
     // Libera memória
-    free_frame(main_frame);
+    remove_from_stack(main_frame);
     free_class_file(cf);
     printf("\n=== Fim do teste de println ===\n");
     return 0;
