@@ -1,334 +1,171 @@
 #include "method_invocation.h"
+#include "instructions.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-// Variável global para a pilha de frames
-static FrameStack frame_stack = {0, NULL};
+// Remover funções duplicadas e utilitários locais
+// Usar apenas funções centrais: getFromConstantPool, getNestedString, get_method, call_method, add_to_stack, remove_from_stack
+// Manter apenas as funções dos invokes, ajustadas
 
-// Função para obter string UTF-8 do constant pool
-char* get_utf8_string(cp_info** constant_pool, u2 index) {
-    if (index == 0 || index > 65535) return NULL;
-    cp_info* entry = constant_pool[index - 1];
-    if (entry->tag == CONSTANT_Utf8) {
-        return (char *) entry->Utf8.bytes;
-    }
-    return NULL;
-}
-
-// Função para obter nome da classe do constant pool
-char* get_class_name(cp_info** constant_pool, u2 class_index) {
-    if (class_index == 0 || class_index > 65535) return NULL;
-    cp_info* entry = constant_pool[class_index - 1];
-    if (entry->tag == CONSTANT_Class) {
-        return get_utf8_string(constant_pool, entry->Class.name_index);
-    }
-    return NULL;
-}
-
-// Função para encontrar um método em uma classe específica
-ResolvedMethod* find_method_in_class(ClassFile* class, char* method_name, char* method_descriptor) {
-    if (!class || !method_name || !method_descriptor) return NULL;
-    
-    for (u2 i = 0; i < class->methods_count; i++) {
-        method_info* method = class->methods[i];
-        char* name = get_utf8_string(class->constant_pool, method->name_index);
-        char* descriptor = get_utf8_string(class->constant_pool, method->descriptor_index);
-        
-        if (name && descriptor && 
-            strcmp(name, method_name) == 0 && 
-            strcmp(descriptor, method_descriptor) == 0) {
-            
-            ResolvedMethod* resolved = malloc(sizeof(ResolvedMethod));
-            resolved->class = class;
-            resolved->method = method;
-            resolved->method_index = i;
-            return resolved;
+// Função utilitária para contar argumentos a partir do descriptor
+int count_method_arguments(const char* descriptor) {
+    if (!descriptor || descriptor[0] != '(') return 0;
+    int count = 0;
+    int i = 1;
+    while (descriptor[i] && descriptor[i] != ')') {
+        switch (descriptor[i]) {
+            case 'B': case 'C': case 'D': case 'F': case 'I': case 'S': case 'Z':
+                count++; i++; break;
+            case 'J': count++; i++; break;
+            case 'L': count++; while (descriptor[i] && descriptor[i] != ';') i++; if (descriptor[i] == ';') i++; break;
+            case '[': while (descriptor[i] == '[') i++; if (descriptor[i] == 'L') { while (descriptor[i] && descriptor[i] != ';') i++; if (descriptor[i] == ';') i++; } else { i++; } count++; break;
+            default: i++; break;
         }
     }
+    return count;
+}
+
+// Função utilitária para obter argumentos da pilha
+Arguments* get_arguments(Frame* frame, char include_this, const char* method_descriptor) {
+    int num_args = count_method_arguments(method_descriptor);
+    if (include_this) num_args++;
+    Arguments* args = malloc(sizeof(Arguments));
+    args->size = num_args;
+    args->arguments = malloc(sizeof(u4) * num_args);
+    for (int i = num_args - 1; i >= 0; i--) {
+        args->arguments[i] = remove_from_stack(frame);
+    }
+    return args;
+}
+
+// Busca método na hierarquia de superclasses
+method_info* find_method_in_hierarchy(ClassFile* class, char* method_name, char* method_descriptor) {
+    while (class) {
+        method_info* m = get_method(class, method_name, method_descriptor);
+        if (m) return m;
+        if (class->super_class == 0) break;
+        char* super_name = getNestedString(class, class->super_class);
+        if (!super_name) break;
+        class = get_class_file(super_name);
+    }
     return NULL;
 }
 
-// Função para encontrar método na hierarquia de superclasses
-ResolvedMethod* find_method_in_superclass(ClassFile* class, char* method_name, char* method_descriptor) {
-    if (!class) return NULL;
-    
-    // Procura na classe atual
-    ResolvedMethod* result = find_method_in_class(class, method_name, method_descriptor);
-    if (result) return result;
-    
-    // Procura na superclasse (se existir)
-    if (class->super_class != 0) {
-        char* super_class_name = get_class_name(class->constant_pool, class->super_class);
-        if (super_class_name) {
-            ClassFile* super_class = get_class_file(super_class_name);
-            if (super_class) {
-                return find_method_in_superclass(super_class, method_name, method_descriptor);
-            }
+// Implementação dos invokes
+int common_invoke(Frame* frame, Instruction instruction, char include_this) {
+    uint16_t methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
+    cp_info* methodref = getFromConstantPool(frame->this_class, methodref_index);
+    cp_info* name_and_type = getFromConstantPool(frame->this_class, methodref->Methodref.name_and_type_index);
+    char* class_name = getNestedString(frame->this_class, methodref->Methodref.class_index);
+    char* method_name = getNestedString(frame->this_class, name_and_type->NameAndType.name_index);
+    char* method_descriptor = getNestedString(frame->this_class, name_and_type->NameAndType.descriptor_index);
+
+    Arguments* args = get_arguments(frame, include_this, method_descriptor);
+    ClassFile* class_file = NULL;
+    if (include_this) {
+        ObjectList* object_list = get_object_list();
+        u4 this_ref = args->arguments[0];
+        if (object_list && this_ref < object_list->size) {
+            Object* obj = object_list->object[this_ref];
+            if (obj) class_file = obj->class;
         }
+    } else {
+        class_file = get_class_file(class_name);
     }
-    
-    return NULL;
-}
-
-// Função para resolver um MethodRef
-ResolvedMethod* resolve_method(ClassFile* current_class, u2 methodref_index) {
-    if (methodref_index == 0 || methodref_index > 65535) return NULL;
-    
-    cp_info* methodref = current_class->constant_pool[methodref_index - 1];
-    if (methodref->tag != CONSTANT_Methodref) return NULL;
-    
-    // Obtém o nome da classe
-    char* class_name = get_class_name(current_class->constant_pool, methodref->Methodref.class_index);
-    if (!class_name) return NULL;
-    
-    // Obtém o nome e tipo do método
-    cp_info* name_and_type = current_class->constant_pool[methodref->Methodref.name_and_type_index - 1];
-    if (name_and_type->tag != CONSTANT_NameAndType) return NULL;
-    
-    char* method_name = get_utf8_string(current_class->constant_pool, name_and_type->NameAndType.name_index);
-    char* method_descriptor = get_utf8_string(current_class->constant_pool, name_and_type->NameAndType.descriptor_index);
-    
-    if (!method_name || !method_descriptor) return NULL;
-    
-    // Carrega a classe alvo
-    ClassFile* target_class = get_class_file(class_name);
-    if (!target_class) return NULL;
-    
-    // Procura o método na hierarquia
-    return find_method_in_superclass(target_class, method_name, method_descriptor);
-}
-
-// Função para resolver um InterfaceMethodRef
-ResolvedMethod* resolve_interface_method(ClassFile* current_class, u2 interface_methodref_index) {
-    if (interface_methodref_index == 0 || interface_methodref_index > 65535) return NULL;
-    
-    cp_info* interface_methodref = current_class->constant_pool[interface_methodref_index - 1];
-    if (interface_methodref->tag != CONSTANT_InterfaceMethodref) return NULL;
-    
-    // Obtém o nome da interface
-    char* interface_name = get_class_name(current_class->constant_pool, interface_methodref->InterfaceMethodref.class_index);
-    if (!interface_name) return NULL;
-    
-    // Obtém o nome e tipo do método
-    cp_info* name_and_type = current_class->constant_pool[interface_methodref->InterfaceMethodref.name_and_type_index - 1];
-    if (name_and_type->tag != CONSTANT_NameAndType) return NULL;
-    
-    char* method_name = get_utf8_string(current_class->constant_pool, name_and_type->NameAndType.name_index);
-    char* method_descriptor = get_utf8_string(current_class->constant_pool, name_and_type->NameAndType.descriptor_index);
-    
-    if (!method_name || !method_descriptor) return NULL;
-    
-    // Carrega a interface
-    ClassFile* interface = get_class_file(interface_name);
-    if (!interface) return NULL;
-    
-    // Procura o método na interface
-    return find_method_in_class(interface, method_name, method_descriptor);
-}
-
-// Função para criar um novo frame
-Frame* create_frame(ClassFile* class, method_info* method) {
-    Frame* frame = malloc(sizeof(Frame));
-    if (!frame) return NULL;
-    
-    frame->this_class = class;
-    frame->this_method = method;
-    frame->stack_top = NULL;
-    frame->stack_size = 0;
-    frame->next = NULL;
-    
-    // Inicializa variáveis locais
-    frame->local_variables = calloc(65536, sizeof(u4)); // Máximo de 65536 variáveis locais
-    
-    // Inicializa o PC (Program Counter)
-    frame->pc.buffer = NULL;
-    frame->pc.position = 0;
-    
-    // Se o método tem código, inicializa o PC
-    for (u2 i = 0; i < method->attributes_count; i++) {
-        attribute_info* attr = method->attributes[i];
-        char* attr_name = get_utf8_string(class->constant_pool, attr->attribute_name_index);
-        if (attr_name && strcmp(attr_name, "Code") == 0) {
-            frame->pc.buffer = attr->Code.code;
-            frame->pc.position = 0;
-            break;
-        }
-    }
-    
-    return frame;
-}
-
-// Função para empilhar um frame
-void push_frame(FrameStack* frame_stack, Frame* frame) {
-    if (!frame_stack || !frame) return;
-    
-    frame->next = frame_stack->top_frame;
-    frame_stack->top_frame = frame;
-    frame_stack->stack_size++;
-}
-
-// Função para desempilhar um frame
-Frame* pop_frame(FrameStack* frame_stack) {
-    if (!frame_stack || !frame_stack->top_frame) return NULL;
-    
-    Frame* frame = frame_stack->top_frame;
-    frame_stack->top_frame = frame->next;
-    frame_stack->stack_size--;
-    
-    return frame;
-}
-
-// Função para executar um método (simplificada)
-void execute_method(Frame* frame) {
-    if (!frame || !frame->pc.buffer) return;
-    
-    // Aqui você implementaria o loop principal de execução
-    // Por enquanto, apenas um placeholder
-    printf("Executando método: %s\n", 
-           get_utf8_string(frame->this_class->constant_pool, frame->this_method->name_index));
-}
-
-// Implementação das instruções invoke
-
-int invokevirtual(Frame* frame, Instruction instruction) {
-    u2 methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
-    
-    // Resolve o método
-    ResolvedMethod* resolved = resolve_method(frame->this_class, methodref_index);
-    if (!resolved) {
-        printf("Erro: Método não encontrado para invokevirtual\n");
+    if (!class_file) {
+        printf("Class file not found\n");
+        free(args->arguments); free(args);
         return -1;
     }
-    
-    remove_from_stack(frame);
-    
-    // Cria um novo frame para o método chamado
-    Frame* new_frame = create_frame(resolved->class, resolved->method);
-    if (!new_frame) {
-        free(resolved);
+    method_info* method = find_method_in_hierarchy(class_file, method_name, method_descriptor);
+    if (!method) {
+        printf("Method not found: %s %s %s\n", class_name, method_name, method_descriptor);
+        free(args->arguments); free(args);
         return -1;
     }
-    
-    // Copia os argumentos da pilha atual para as variáveis locais do novo frame
-    // (implementação simplificada - você precisará implementar a lógica completa)
-    
-    // Empilha o novo frame
-    push_frame(&frame_stack, new_frame);
-    
-    // Executa o método
-    execute_method(new_frame);
-    
-    // Desempilha o frame
-    Frame* returned_frame = pop_frame(&frame_stack);
-    if (returned_frame) {
-        // Copia o valor de retorno para a pilha do frame original
-        // (implementação simplificada)
-        free(returned_frame);
+    MethodResponses res = call_method(frame, class_file, method, args);
+    free(args->arguments); free(args);
+    if (res.status == 0) {
+        add_to_stack(frame, res.value);
     }
-    
-    free(resolved);
-    return 0;
+    return res.status;
 }
 
 int invokespecial(Frame* frame, Instruction instruction) {
-    u2 methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
-    
-    // Similar ao invokevirtual, mas para métodos especiais (construtores, métodos privados)
-    ResolvedMethod* resolved = resolve_method(frame->this_class, methodref_index);
-    if (!resolved) {
-        printf("Erro: Método não encontrado para invokespecial\n");
-        return -1;
-    }
-    
-    remove_from_stack(frame);
-    
-    // Cria um novo frame para o método chamado
-    Frame* new_frame = create_frame(resolved->class, resolved->method);
-    if (!new_frame) {
-        free(resolved);
-        return -1;
-    }
-    
-    // Empilha o novo frame
-    push_frame(&frame_stack, new_frame);
-    
-    // Executa o método
-    execute_method(new_frame);
-    
-    // Desempilha o frame
-    Frame* returned_frame = pop_frame(&frame_stack);
-    if (returned_frame) {
-        free(returned_frame);
-    }
-    
-    free(resolved);
-    return 0;
+    return common_invoke(frame, instruction, 1);
 }
 
 int invokestatic(Frame* frame, Instruction instruction) {
-    u2 methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
-    
-    // Para métodos estáticos, não há receiver
-    ResolvedMethod* resolved = resolve_method(frame->this_class, methodref_index);
-    if (!resolved) {
-        printf("Erro: Método estático não encontrado\n");
-        return -1;
-    }
-    
-    // Cria um novo frame para o método chamado
-    Frame* new_frame = create_frame(resolved->class, resolved->method);
-    if (!new_frame) {
-        free(resolved);
-        return -1;
-    }
-    
-    // Empilha o novo frame
-    push_frame(&frame_stack, new_frame);
-    
-    // Executa o método
-    execute_method(new_frame);
-    
-    // Desempilha o frame
-    Frame* returned_frame = pop_frame(&frame_stack);
-    if (returned_frame) {
-        free(returned_frame);
-    }
-    
-    free(resolved);
-    return 0;
+    return common_invoke(frame, instruction, 0);
 }
 
 int invokeinterface(Frame* frame, Instruction instruction) {
-    u2 interface_methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
-    //u1 count = instruction.operands[2]; 
-    //u1 zero = instruction.operands[3]; 
-    
-    // Resolve o método da interface
-    ResolvedMethod* resolved = resolve_interface_method(frame->this_class, interface_methodref_index);
-    if (!resolved) {
-        printf("Erro: Método de interface não encontrado\n");
-        return -1;
+    return common_invoke(frame, instruction, 1);
+}
+
+// invokevirtual com tratamento especial para println/print
+int invokevirtual(Frame* frame, Instruction instruction) {
+    uint16_t methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
+    cp_info* methodref = getFromConstantPool(frame->this_class, methodref_index);
+    cp_info* name_and_type = getFromConstantPool(frame->this_class, methodref->Methodref.name_and_type_index);
+    char* class_name = getNestedString(frame->this_class, methodref->Methodref.class_index);
+    char* method_name = getNestedString(frame->this_class, name_and_type->NameAndType.name_index);
+    char* method_descriptor = getNestedString(frame->this_class, name_and_type->NameAndType.descriptor_index);
+    if (strcmp(class_name, "java/io/PrintStream") == 0 && (strcmp(method_name, "println") == 0 || strcmp(method_name, "print") == 0)) {
+        char type = method_descriptor[1];
+        switch (type) {
+            case 'I': {
+                int value = (int)remove_from_stack(frame);
+                printf("%d", value);
+                break;
+            }
+            case 'J': {
+                u4 low = remove_from_stack(frame);
+                u4 high = remove_from_stack(frame);
+                long long value = ((long long)high << 32) | low;
+                printf("%lld", value);
+                break;
+            }
+            case 'F': {
+                u4 raw = remove_from_stack(frame);
+                float* f = (float*)&raw;
+                printf("%f", *f);
+                break;
+            }
+            case 'D': {
+                u4 low = remove_from_stack(frame);
+                u4 high = remove_from_stack(frame);
+                double d;
+                unsigned long long bits = ((unsigned long long)high << 32) | low;
+                memcpy(&d, &bits, sizeof(double));
+                printf("%.15f", d);
+                break;
+            }
+            case 'C': {
+                char value = (char)remove_from_stack(frame);
+                printf("%c", value);
+                break;
+            }
+            case 'Z': {
+                u4 value = remove_from_stack(frame);
+                printf("%s", value ? "true" : "false");
+                break;
+            }
+            case 'L': {
+                u4 ref = remove_from_stack(frame);
+                printf("[obj ref %u]", ref);
+                break;
+            }
+            case ')':
+                break;
+            default:
+                printf("Tipo não suportado para println: %s\n", method_descriptor);
+                break;
+        }
+        if (strcmp(method_name, "println") == 0) printf("\n");
+        return 0;
     }
-    
-    remove_from_stack(frame);
-    
-    // Cria um novo frame para o método chamado
-    Frame* new_frame = create_frame(resolved->class, resolved->method);
-    if (!new_frame) {
-        free(resolved);
-        return -1;
-    }
-    
-    // Empilha o novo frame
-    push_frame(&frame_stack, new_frame);
-    
-    // Executa o método
-    execute_method(new_frame);
-    
-    // Desempilha o frame
-    Frame* returned_frame = pop_frame(&frame_stack);
-    if (returned_frame) {
-        free(returned_frame);
-    }
-    
-    free(resolved);
-    return 0;
+    return common_invoke(frame, instruction, 1);
 } 
+

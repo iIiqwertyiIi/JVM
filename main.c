@@ -2,6 +2,7 @@
 #include "output.h"
 
 int main (int argc, char *argv[]) {
+  //printf("[DEBUG] Início do main da JVM\n");
   
   if (argc < 2) {
     printf("No file provided\n");
@@ -29,5 +30,6 @@ int main (int argc, char *argv[]) {
   free_class_file(class_file);
   free_buffer();
   
+  //printf("[DEBUG] Fim do main da JVM\n");
   return 0;
 }

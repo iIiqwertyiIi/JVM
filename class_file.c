@@ -81,7 +81,6 @@ void free_class_file(ClassFile* cf) {
     // 1. Liberta os campos e seus atributos
     if (cf->fields) {
         free_all_fields(cf->fields, cf->fields_count);
-        free(cf->fields);
     }
 
     // 2. Liberta os métodos e seus atributos

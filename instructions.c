@@ -1,5 +1,6 @@
 #include "instructions.h"
-
+#include "logic_instructions.h"
+#include "arithmetic_instructions.h"
 void add_to_stack(Frame * frame, u4 value) {
   OperandStack * stack = malloc(sizeof(OperandStack));
   frame->stack_size++;
@@ -19,6 +20,8 @@ uint32_t remove_from_stack(Frame * frame) {
 }
 
 InstructionType * get_instruction_type(u1 opcode) {
+  //printf("[DEBUG] get_instruction_type: opcode=0x%02x\n", opcode);
+  //if (opcode == 0xa7) printf("[DEBUG] get_instruction_type: opcode 0xa7 (goto) encontrado!\n");
   static InstructionType instructions[] = {
     //inicio funcoes de load_store
     {0x00, 0, "nop", nop},
@@ -161,7 +164,7 @@ InstructionType * get_instruction_type(u1 opcode) {
     {0x83, 0, "lxor", lxor},    
     //fim instrucoes logicas
     //incremento
-    {0x84, 2, "iinc", },
+    {0x84, 2, "iinc", iinc},
     //inicio instrucoes conversoes
     {0x85, 0, "i2l", i2l},
     {0x86, 0, "i2f", i2f},
@@ -295,7 +298,13 @@ InstructionType * get_instruction_type(u1 opcode) {
     // other instructions
   };
 
-  return &instructions[opcode];
+  int num_instructions = sizeof(instructions) / sizeof(InstructionType);
+  for (int i = 0; i < num_instructions; i++) {
+    if (instructions[i].opcode == opcode) {
+      return &instructions[i];
+    }
+  }
+  return NULL;
 };
 
 int nop(Frame * frame, Instruction instruction) {
