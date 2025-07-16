@@ -1,7 +1,7 @@
 # Objetivo do trabalho
 Projeto disciplina Software Básico da Universidade de Brasília com objetivo de simular funcionamento de uma máquina java virtual (**Java**)
 
-## Como rodar projeto
+## Como rodar projeto - leitor exibidor
 Dentro do diretório do projeto, rode:
 `make clean`
 Para apagar registros antigos
@@ -11,6 +11,11 @@ Então, rode:
 
 E, por fim:
 `./jvm_viewer exemplos/nome_arquivo.class `
+
+## Como acessar documentação
+Dentro do terminal do projeto rode:
+`doxygen Doxyfile`
+depois vá até a pasta `docs/html` e copie o caminho do arquivo `index.html` e cole o resultado no navegador
 
 ## Alguns Arquivos importantes
 `instruction.c`
@@ -25,12 +30,3 @@ Responsável pela leitura dos arquivos *.class*.
 
 `types.c`
 Define toda a tipagem e interface da JVM. Através desse arquivo, é possível visualizar e interagir com todo o projeto.
-
-`logic_instructions` e `arithmertic_instructions`
-Possui todas as instruções lógicas e aritméticas implementadas na JVM.
-
-`load_store`
-Possui instruções relacionadas a load e a store implementadas na JVM.
-
-`conversions.c` e `helpers.c`
-Arquivos responsáveis pela conversões de tipos, como *long to double*, por exemplo.

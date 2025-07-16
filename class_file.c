@@ -1,9 +1,14 @@
+/**
+ * @file class_file.c
+ * @brief implementacao das instrucoes de leitura, retorno e desalocacao de memoria do class_file lido pela JVM
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em class_file.h
+ * 
+ * @see class_file.h
+ */
+
 #include "class_file.h"
-#include "attribute_info.h" 
 #include <stdlib.h>
-#include "field_reader.h"
-#include "method_info.h"
-#include "constant_pool.h"
 
 ClassFileBuffer * get_class_file_buffer() {
     static ClassFileBuffer class_file = {

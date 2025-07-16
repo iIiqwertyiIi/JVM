@@ -2,3 +2,4 @@
 *.exe
 .vscode/*
 jvm_viewer
+docs/html

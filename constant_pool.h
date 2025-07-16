@@ -1,3 +1,10 @@
+/**
+ * @file constant_pool.h
+ * @brief arquivo cabecalho de leitura e desalocacao de memória da constant_pool
+ * @author Ana Paula Nobrega
+ * @see constant_pool.c
+ */
+
 #ifndef CONSTANT_POOL_H
 #define CONSTANT_POOL_H
 #include "types.h"
@@ -16,9 +23,19 @@
 #define CONSTANT_NameAndType        12
 #define CONSTANT_Utf8               1
 
-// Função para ler o constant pool completo
+/**
+ * @brief Faz leitura e aloca na memória lista de constant_pools presente
+ * @param constant_pool_count quantidade de constant_pool
+ * @return ponteiro de ponteiro para primeiro item da lista de constant_pool
+ * @see read_constant_pool() implemetacao (em constant_pool.c)
+ */
 cp_info ** read_constant_pool(u2 constant_pool_count);
-
+/**
+ * @brief Faz leitura e aloca na memória lista de constant_pools presente
+ * @param constant_pool_count quantidade de constant_pool
+ * @param constant_pool ponteiro de ponteiro para primeiro item da lista de constant_pools
+ * @see read_constant_pool() implemetacao (em constant_pool.c)
+ */
 void free_constant_pool(u2 constant_pool_count, cp_info ** constant_pool);
 
 #endif

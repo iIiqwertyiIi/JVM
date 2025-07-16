@@ -1,3 +1,13 @@
+/**
+ * @file constant_pool.c
+ * @brief implementacao das instrucoes de leitura e desalocacao de memoria do constant_pool lido pela JVM
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em constant_pool.h
+ * 
+ * @see constant_pool.h
+ */
+
+
 #include "constant_pool.h"
 #include <stdlib.h>
 #include <stdio.h>

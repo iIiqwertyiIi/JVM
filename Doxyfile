@@ -1,0 +1,45 @@
+# Nome do projeto
+PROJECT_NAME           = "JVM - Software Básico, grupo 6"
+
+PROJECT_BRIEF          = Desenvolvimento de máquina virtual Java e leitor exibidor com uso da linguagem C
+
+# Diretório de saída da documentação
+OUTPUT_DIRECTORY       = docs
+
+# Diretório onde estão os arquivos fonte (raiz do projeto)
+INPUT                  = .
+
+# Incluir todos os arquivos no diretório
+RECURSIVE              = NO
+
+# Arquivos e extensões reconhecidos como código-fonte
+FILE_PATTERNS          = *.h *.c
+
+# Incluir tudo que estiver no diretório (mesmo arquivos não documentados)
+EXTRACT_ALL            = YES
+
+# Geração de documentação em HTML
+GENERATE_HTML          = YES
+
+# Não gerar LaTeX por enquanto (PDF)
+GENERATE_LATEX         = NO
+
+# Permitir uso de @see, @ref etc.
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+# Permitir links entre arquivos/classes/etc usando @see
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = YES
+
+# Permitir links entre entidades do código
+GENERATE_TAGFILE       =
+
+# Mostrar avisos se @see referenciar algo que não existe
+WARN_IF_UNDOCUMENTED   = YES
+
+# Se quiser ver os diagramas de classes/funções (instale Graphviz)
+HAVE_DOT               = NO
+
+# Encoding dos arquivos fonte (UTF-8 é padrão moderno)
+INPUT_ENCODING         = UTF-8
