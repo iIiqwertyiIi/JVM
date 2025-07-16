@@ -1,3 +1,12 @@
+/**
+ * @file arithmetic_instructions.c
+ * @brief implementacao das instrucoes aritmeticas basicas da jvm
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em arithmetic_instructions.h
+ * 
+ * @see arithmetic_instructions.h
+ */
+
 #include "arithmetic_instructions.h"
 
 int iadd(Frame * frame, Instruction instruction) {
@@ -406,6 +415,14 @@ int lushr(Frame * frame, Instruction instruction) {
   u4 result_high = (u4) (result >> 32);
   add_to_stack(frame, result_high);
   add_to_stack(frame, result_low);
+
+  return 0;
+}
+
+int iinc(Frame * frame, Instruction instruction) {
+  u1 index = instruction.operands[0];
+  u1 consti = instruction.operands[1];
+  frame->local_variables[index] = int_to_u4((int32_t) u1_to_byte(consti) + u4_to_int(frame->local_variables[index]));
 
   return 0;
 }

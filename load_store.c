@@ -118,7 +118,29 @@ int ldc(Frame * frame, Instruction instruction) {
             add_to_stack(frame, constant->Float.bytes);
             break;
         case 8:
-            add_to_stack(frame, constant->String.string_index);
+            uint16_t string_index = constant->String.string_index;
+            cp_info *string_constant = getFromConstantPool(frame->this_class, string_index);
+            if (string_constant->tag == 1) { 
+                String * string = malloc(sizeof(String));
+                string->size = string_constant->Utf8.length + 1;
+                string->string = malloc(sizeof(char) * string->size);
+                for (int i = 0; i < string->size - 1; i++) {
+                string->string[i] = string_constant->Utf8.bytes[i];
+                }
+                string->string[string->size - 1] = '\0';
+                uint32_t index = add_string(string);
+                Object * object = malloc(sizeof(Object));
+                object->class = get_string_class_file();
+                object->fields = malloc(sizeof(ActiveField *) * 1);
+                object->fields[0] = malloc(sizeof(ActiveField));
+                object->fields[0]->field = object->class->fields[0];
+                object->fields[0]->value = index;
+
+                uint32_t ref = add_object(object);
+                add_to_stack(frame, ref);
+            } else {
+                add_to_stack(frame, string_index);
+            }
             break;
         default:
             break;
@@ -137,7 +159,26 @@ int ldc_w(Frame * frame, Instruction instruction) {
             add_to_stack(frame, constant->Float.bytes);
             break;
         case 8:
-            add_to_stack(frame, constant->String.string_index);
+            uint16_t string_index = constant->String.string_index;
+            cp_info *string_constant = frame->this_class->constant_pool[string_index];
+            if (string_constant->tag == 1) { 
+                String * string = malloc(sizeof(String));
+                string->size = string_constant->Utf8.length;
+                string->string = malloc(sizeof(char) * string->size);
+                for (int i = 0; i < string->size; i++) {
+                string->string[i] = string_constant->Utf8.bytes[i];
+                }
+                uint32_t index = add_string(string);
+                Object * object = malloc(sizeof(Object));
+                object->class = get_string_class_file();
+                object->fields = malloc(sizeof(ActiveField *) * 1);
+                object->fields[0] = malloc(sizeof(ActiveField));
+                object->fields[0]->field = object->class->fields[0];
+                object->fields[0]->value = index;
+
+                uint32_t ref = add_object(object);
+                add_to_stack(frame, ref);
+            }
             break;
         default:
             break;

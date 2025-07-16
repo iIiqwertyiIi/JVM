@@ -25,6 +25,14 @@ u4 add_object(Object * object) {
 int new_(Frame * frame, Instruction instruction) {
     u2 index = (((u2) instruction.operands[0]) << 8) | instruction.operands[1];
     char * class_name = (char *) frame->this_class->constant_pool[frame->this_class->constant_pool[index - 1]->Class.name_index - 1]->Utf8.bytes;
+    if (strcmp(class_name, "java/lang/String") == 0) {
+        return 0;
+    }
+
+    if (strcmp(class_name, "java/lang/StringBuffer") == 0) {
+        return new_string_buffer(frame, instruction);
+    }
+
     ClassFile * class_file = get_class_file(class_name);
     Object * object = malloc(sizeof(Object));
     object->class = class_file;
@@ -59,6 +67,9 @@ int getstatic(Frame * frame, Instruction instruction) {
     u2 index = (((u2) instruction.operands[0]) << 8) | instruction.operands[1];
     cp_info * fieldref = frame->this_class->constant_pool[index - 1];
     char * class_name = (char *) frame->this_class->constant_pool[frame->this_class->constant_pool[fieldref->Fieldref.class_index - 1]->Class.name_index - 1]->Utf8.bytes;
+    if (strcmp(class_name, "java/lang/System") == 0 || strcmp(class_name, "java/lang/String") == 0) {
+        return 0;
+    }
     ClassFile * class_file = get_class_file(class_name);
     cp_info * nameandtype = frame->this_class->constant_pool[fieldref->Fieldref.name_and_type_index];
     char * field_name = (char *) frame->this_class->constant_pool[nameandtype->NameAndType.name_index - 1]->Utf8.bytes;

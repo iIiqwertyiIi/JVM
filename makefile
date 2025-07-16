@@ -28,6 +28,10 @@ SRCS = reader.c \
 	   method_invocation.c \
 	   main.c \
 	   table.c \
+	   string.c \
+	   stringBuffer.c \
+	   return.c \
+	   wide.c \
 
 # Arquivos objeto
 OBJS = $(SRCS:%.c=$(OBJ_DIR)/%.o)
@@ -52,6 +56,10 @@ HEADERS = types.h \
 		  instructions.h \
 		  method_invocation.h \
 		  table.h \
+		  string.h \
+	   	  stringBuffer.h \
+	      return.h \
+	      wide.h \
 
 # Regra principal
 all: directories $(TARGET)
@@ -148,6 +156,22 @@ $(OBJ_DIR)/table.o: table.c table.h types.h reader.h instructions.h
 $(OBJ_DIR)/method_invocation.o: method_invocation.c method_invocation.h types.h interpreter.h instructions.h
 	@echo "Compilando method_invocation.c..."
 	@$(CC) $(CFLAGS) -c method_invocation.c -o $@
+
+$(OBJ_DIR)/string.o: string.c string.h types.h instructions.h
+	@echo "Compilando string.c..."
+	@$(CC) $(CFLAGS) -c string.c -o $@
+
+$(OBJ_DIR)/stringBuffer.o: stringBuffer.c stringBuffer.h types.h string.h instructions.h object.h
+	@echo "Compilando stringBuffer.c..."
+	@$(CC) $(CFLAGS) -c stringBuffer.c -o $@
+
+$(OBJ_DIR)/wide.o: wide.c wide.h types.h instructions.h
+	@echo "Compilando wide.c..."
+	@$(CC) $(CFLAGS) -c wide.c -o $@
+
+$(OBJ_DIR)/return.o: return.c return.h types.h instructions.h
+	@echo "Compilando return.c..."
+	@$(CC) $(CFLAGS) -c return.c -o $@
 
 # Limpeza
 clean:

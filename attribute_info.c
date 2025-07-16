@@ -1,3 +1,12 @@
+/**
+ * @file attribute_info.c
+ * @brief implementacao das instrucoes de leitura e desalocacao de memoria dos attribute_info
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em attribute_info.h
+ * 
+ * @see attribute_info.h
+ */
+
 #include "attribute_info.h"
 #include "reader.h"
 #include <stdlib.h>

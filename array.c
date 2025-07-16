@@ -1,3 +1,12 @@
+/**
+ * @file array.c
+ * @brief implementacao das instrucoes de array basicas da jvm
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em array.h
+ * 
+ * @see array.h
+ */
+
 #include "array.h"
 
 ArrayList * get_array_list() {

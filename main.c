@@ -12,7 +12,19 @@ int main (int argc, char *argv[]) {
   read_file(argv[1]);
 
   ClassFile * class_file = read_class_file();
-  print_class_file(class_file);
+  pushToClassFileList(class_file);
+
+  if (argc > 2) {
+    if (strcmp(argv[2], "-show") == 0) {
+      print_class_file(class_file);
+
+      free_class_file(class_file);
+      free_buffer();
+      return 0;
+    }
+  }
+
+  run_class_file(class_file);
 
   free_class_file(class_file);
   free_buffer();
