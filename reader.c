@@ -54,6 +54,13 @@ u4 u4read() {
     return value;
 }
 
+u2 u2read_buffer(Buffer * buffer) {
+    u2 value = buffer->buffer[buffer->position] << 8;
+    value |= buffer->buffer[buffer->position + 1];
+    buffer->position += 2;
+    return value;
+}
+
 u4 u4read_buffer(Buffer * buffer) {
     u4 value = buffer->buffer[buffer->position] << 24;
     value |= buffer->buffer[buffer->position + 1] << 16;

@@ -24,7 +24,7 @@ int main (int argc, char *argv[]) {
     }
   }
 
-  int res = run_class_file(class_file);
+  run_class_file(class_file);
 
   free_class_file(class_file);
   free_buffer();

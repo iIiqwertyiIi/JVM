@@ -23,7 +23,6 @@ ClassFile * load_class_file(char * class_name) {
 }
 
 int run_class_file(ClassFile * class_file) {
-  uint16_t this_class = class_file->this_class;
   char * super_name = getNestedString(class_file, class_file->super_class);
 
   if (strcmp(super_name, "java/lang/Object") != 0) {
@@ -69,7 +68,7 @@ cp_info * getFromConstantPool(ClassFile * class_file, uint16_t index) {
 char * getNestedString(ClassFile * class_file, uint16_t index) {
   cp_info * info = getFromConstantPool(class_file, index);
   if (info->tag == 1) {
-    return info->Utf8.bytes;
+    return (char*) info->Utf8.bytes;
   }
   return getNestedString(class_file, info->Class.name_index);
 }
@@ -86,7 +85,7 @@ MethodResponses call_method(Frame * current_frame, ClassFile * class_file, metho
   attribute_info * code_attribute;
   for (int i = 0; i < method->attributes_count; i++) {
     attribute_info * attribute = method->attributes[i];
-    if (strcmp(class_file->constant_pool[attribute->attribute_name_index - 1]->Utf8.bytes, "Code") == 0){
+    if (strcmp((char *) class_file->constant_pool[attribute->attribute_name_index - 1]->Utf8.bytes, "Code") == 0){
       code_attribute = attribute;
       break;
     }
@@ -111,14 +110,13 @@ MethodResponses call_method(Frame * current_frame, ClassFile * class_file, metho
 
   call_frame->pc.position = 0;
   call_frame->pc.buffer = code_attribute->Code.code;
-  for (; call_frame->pc.position < code_attribute->Code.code_length; call_frame->pc.position) {
-    // printf("Instruction: %d\n", call_frame->pc.position);
+  for (; call_frame->pc.position < code_attribute->Code.code_length;) {
     Instruction instruction = read_instruction_buffer(&call_frame->pc);
     int result = instruction.type->opcode_function(call_frame, instruction);
     if (result != 0) {
       // deal with responses
       if (result == 1) {
-        res.value = (uint32_t) NULL;
+        res.value = (uint32_t) 0;
       } else if (result == 2 && call_frame != NULL) {
         res.value = remove_from_stack(call_frame);
       } else if (result == 3) {

@@ -63,7 +63,7 @@ int stringlength(Frame * frame, Instruction instruction) {
     add_to_stack(frame, 0);
     return 0;
   }
-  String * string = get_string(object->fields[0]->value);
+  get_string(object->fields[0]->value);
   return 0;
 }
 
@@ -72,7 +72,7 @@ ClassFile * get_string_class_file() {
     .tag = 1,
       .Utf8 = {
         .length = 16,
-        .bytes = "java/lang/String"
+        .bytes = (u1*) "java/lang/String"
       }
   };
   static cp_info class_index = {
@@ -85,7 +85,7 @@ ClassFile * get_string_class_file() {
     .tag = 1,
     .Utf8 = {
         .length = 3,
-        .bytes = "ref"
+        .bytes =  (u1*) "ref"
       }
   };
 

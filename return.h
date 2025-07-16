@@ -1,6 +1,7 @@
 #ifndef RETURN_H
 #define RETURN_H
 #include "types.h"
+#include "instructions.h"
 
 int ret(Frame * frame, Instruction instruction);
 int ireturn(Frame * frame, Instruction instruction);
