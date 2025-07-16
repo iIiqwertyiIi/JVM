@@ -223,4 +223,34 @@ typedef struct ArrayList {
   Array * * array;
 } ArrayList;
 
+typedef struct MethodResponses {
+  int status;
+  uint32_t value;
+} MethodResponses;
+
+typedef struct Arguments {
+  uint32_t * arguments;
+  uint32_t size;
+} Arguments;
+
+typedef struct String {
+  uint32_t size;
+  char * string;
+} String;
+
+typedef struct StringList {
+  uint32_t size;
+  String * * string;
+} StringList;
+
+typedef struct StringBuffer {
+  char * string;
+  uint32_t curr_size;
+} StringBuffer;
+
+typedef struct StringBufferList {
+  StringBuffer * * buffer;
+  uint32_t size;
+} StringBufferList;
+
 #endif

@@ -37,6 +37,8 @@ int lshr(Frame * frame, Instruction instruction);
 int iushr(Frame * frame, Instruction instruction);
 int lushr(Frame * frame, Instruction instruction);
 
+int iinc(Frame * frame, Instruction instruction);
+
 
 
 #endif // ARITHMETIC_H

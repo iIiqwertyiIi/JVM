@@ -3,6 +3,8 @@
 #include "types.h"
 #include "interpreter.h"
 #include "instructions.h"
+#include "string.h"
+#include "stringBuffer.h"
 
 ObjectList * get_object_list();
 Object * get_object(u4 index);

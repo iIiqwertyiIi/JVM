@@ -10,5 +10,8 @@
 ClassFile * read_class_file();
 ClassFileBuffer * get_class_file_buffer();
 void free_class_file(ClassFile* class_file);
+void pushToClassFileList(ClassFile * class_file);
+
+void setup_static_fields(ClassFile * class_file);
 
 #endif
