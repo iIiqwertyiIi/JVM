@@ -64,6 +64,7 @@ ClassFile * read_class_file() {
     for (u2 i = 0; i < class_file->attributes_count; i++) {
         class_file->attributes[i] = read_attribute_info(class_file->constant_pool);
     }
+    setup_static_fields(class_file);
     return class_file;
 }
 
@@ -102,4 +103,22 @@ void free_class_file(ClassFile* cf) {
     
     // 6. liberta a estrutura ClassFile principal
     free(cf);
+}
+
+void setup_static_fields(ClassFile * class_file) {
+  class_file->static_fields_count = 0;
+  class_file->static_fields = NULL;
+  for (int i = 0; i < class_file->fields_count; i++) {
+    if (class_file->fields[i]->access_flags & 0x8) {
+      class_file->static_fields_count++;
+      if (class_file->static_fields == NULL) {
+        class_file->static_fields = malloc(sizeof(ActiveField *) * class_file->static_fields_count);
+      } else {
+        class_file->static_fields = realloc(class_file->static_fields, sizeof(ActiveField *) * class_file->static_fields_count);
+      }
+      class_file->static_fields[class_file->static_fields_count - 1] = malloc(sizeof(ActiveField));
+      class_file->static_fields[class_file->static_fields_count - 1]->field = class_file->fields[i];
+      class_file->static_fields[class_file->static_fields_count - 1]->value = 0;
+    }
+  }
 }
