@@ -238,145 +238,296 @@ void execute_method(Frame* frame) {
 
 int invokevirtual(Frame* frame, Instruction instruction) {
     u2 methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
-    
-    // Resolve o método
-    ResolvedMethod* resolved = resolve_method(frame->this_class, methodref_index);
-    if (!resolved) {
-        printf("Erro: Método não encontrado para invokevirtual\n");
+    // Descobrir o descriptor do método
+    // Precisamos do 'this' para saber a classe real do objeto
+    // 1. Descobrir quantos argumentos o método tem
+    // 2. O 'this' está na pilha, logo antes dos argumentos
+    // 3. Pegar o valor de 'this' (referência do objeto)
+    // 4. Descobrir a classe real do objeto
+    // 5. Resolver o método na classe real
+
+    // Para isso, primeiro contamos os argumentos
+    // (não removemos ainda da pilha)
+    // Descobrir o método na classe declarada para pegar o descriptor
+    ResolvedMethod* resolved_decl = resolve_method(frame->this_class, methodref_index);
+    if (!resolved_decl) {
+        printf("Erro: Método não encontrado para invokevirtual (decl)");
         return -1;
     }
-    
-    remove_from_stack(frame);
-    
-    // Cria um novo frame para o método chamado
+    char* descriptor = get_utf8_string(resolved_decl->class->constant_pool, resolved_decl->method->descriptor_index);
+    int num_args = count_method_arguments(descriptor);
+    int total_args = num_args + 1; // +1 para o this
+
+    // Pegar o 'this' sem remover da pilha (está na posição stack_size - num_args - 1)
+    OperandStack* it = frame->stack_top;
+    for (u4 i = 0; i < num_args; i++) {
+        if (it) it = it->next;
+    }
+    u4 this_ref = it ? it->self : 0;
+    // Aqui, assumimos que o valor de referência do objeto é o índice na lista de objetos
+    // (ajuste conforme sua implementação de objetos)
+    // Descobrir a classe real do objeto
+    ObjectList* object_list = get_object_list(); // Supondo que existe uma função para isso
+    ClassFile* real_class = NULL;
+    if (object_list && this_ref < object_list->size) {
+        Object* obj = object_list->object[this_ref];
+        if (obj) real_class = obj->class;
+    }
+    if (!real_class) real_class = resolved_decl->class; // fallback
+
+    // Agora resolve o método na classe real
+    ResolvedMethod* resolved = find_method_in_superclass(real_class, get_utf8_string(resolved_decl->class->constant_pool, resolved_decl->method->name_index), descriptor);
+    if (!resolved) {
+        printf("Erro: Método não encontrado para invokevirtual (dinâmico)\n");
+        free(resolved_decl);
+        return -1;
+    }
+    free(resolved_decl);
+
+    // Agora segue igual ao anterior: remove argumentos e this, cria frame, etc.
+    u4* args = malloc(sizeof(u4) * total_args);
+    for (int i = total_args - 1; i >= 0; i--) {
+        args[i] = remove_from_stack(frame);
+    }
     Frame* new_frame = create_frame(resolved->class, resolved->method);
     if (!new_frame) {
         free(resolved);
+        free(args);
         return -1;
     }
-    
-    // Copia os argumentos da pilha atual para as variáveis locais do novo frame
-    // (implementação simplificada - você precisará implementar a lógica completa)
-    
-    // Empilha o novo frame
+    for (int i = 0; i < total_args; i++) {
+        new_frame->local_variables[i] = args[i];
+    }
+    free(args);
     push_frame(&frame_stack, new_frame);
-    
-    // Executa o método
     execute_method(new_frame);
-    
-    // Desempilha o frame
     Frame* returned_frame = pop_frame(&frame_stack);
     if (returned_frame) {
-        // Copia o valor de retorno para a pilha do frame original
-        // (implementação simplificada)
-        free(returned_frame);
+        char* ret_type = strchr(descriptor, ')');
+        if (ret_type && *(ret_type + 1) != 'V') {
+            ret_type++;
+            if (*ret_type == 'J' || *ret_type == 'D') {
+                u4 high = remove_from_stack(returned_frame);
+                u4 low = remove_from_stack(returned_frame);
+                add_to_stack(frame, low);
+                add_to_stack(frame, high);
+            } else {
+                u4 ret_val = remove_from_stack(returned_frame);
+                add_to_stack(frame, ret_val);
+            }
+        }
+        free_frame(returned_frame);
     }
-    
     free(resolved);
     return 0;
 }
 
 int invokespecial(Frame* frame, Instruction instruction) {
     u2 methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
-    
-    // Similar ao invokevirtual, mas para métodos especiais (construtores, métodos privados)
+    // Resolve o método
     ResolvedMethod* resolved = resolve_method(frame->this_class, methodref_index);
     if (!resolved) {
         printf("Erro: Método não encontrado para invokespecial\n");
         return -1;
     }
-    
-    remove_from_stack(frame);
-    
-    // Cria um novo frame para o método chamado
+    // Descobrir o descriptor do método
+    char* descriptor = get_utf8_string(resolved->class->constant_pool, resolved->method->descriptor_index);
+    int num_args = count_method_arguments(descriptor);
+    // Para métodos de instância, o 'this' também é passado (primeiro argumento)
+    int total_args = num_args + 1;
+    u4* args = malloc(sizeof(u4) * total_args);
+    for (int i = total_args - 1; i >= 0; i--) {
+        args[i] = remove_from_stack(frame);
+    }
     Frame* new_frame = create_frame(resolved->class, resolved->method);
     if (!new_frame) {
         free(resolved);
+        free(args);
         return -1;
     }
-    
-    // Empilha o novo frame
+    for (int i = 0; i < total_args; i++) {
+        new_frame->local_variables[i] = args[i];
+    }
+    free(args);
     push_frame(&frame_stack, new_frame);
-    
-    // Executa o método
     execute_method(new_frame);
-    
-    // Desempilha o frame
     Frame* returned_frame = pop_frame(&frame_stack);
     if (returned_frame) {
-        free(returned_frame);
+        char* ret_type = strchr(descriptor, ')');
+        if (ret_type && *(ret_type + 1) != 'V') {
+            ret_type++;
+            if (*ret_type == 'J' || *ret_type == 'D') {
+                u4 high = remove_from_stack(returned_frame);
+                u4 low = remove_from_stack(returned_frame);
+                add_to_stack(frame, low);
+                add_to_stack(frame, high);
+            } else {
+                u4 ret_val = remove_from_stack(returned_frame);
+                add_to_stack(frame, ret_val);
+            }
+        }
+        free_frame(returned_frame);
     }
-    
     free(resolved);
     return 0;
 }
 
 int invokestatic(Frame* frame, Instruction instruction) {
     u2 methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
-    
-    // Para métodos estáticos, não há receiver
+    // Resolve o método
     ResolvedMethod* resolved = resolve_method(frame->this_class, methodref_index);
     if (!resolved) {
-        printf("Erro: Método estático não encontrado\n");
+        printf("Erro: Método não encontrado para invokestatic\n");
         return -1;
     }
-    
-    // Cria um novo frame para o método chamado
+    // Descobrir o descriptor do método
+    char* descriptor = get_utf8_string(resolved->class->constant_pool, resolved->method->descriptor_index);
+    int num_args = count_method_arguments(descriptor);
+    // Métodos estáticos não têm 'this'
+    int total_args = num_args;
+    u4* args = malloc(sizeof(u4) * total_args);
+    for (int i = total_args - 1; i >= 0; i--) {
+        args[i] = remove_from_stack(frame);
+    }
     Frame* new_frame = create_frame(resolved->class, resolved->method);
     if (!new_frame) {
         free(resolved);
+        free(args);
         return -1;
     }
-    
-    // Empilha o novo frame
+    for (int i = 0; i < total_args; i++) {
+        new_frame->local_variables[i] = args[i];
+    }
+    free(args);
     push_frame(&frame_stack, new_frame);
-    
-    // Executa o método
     execute_method(new_frame);
-    
-    // Desempilha o frame
     Frame* returned_frame = pop_frame(&frame_stack);
     if (returned_frame) {
-        free(returned_frame);
+        char* ret_type = strchr(descriptor, ')');
+        if (ret_type && *(ret_type + 1) != 'V') {
+            ret_type++;
+            if (*ret_type == 'J' || *ret_type == 'D') {
+                u4 high = remove_from_stack(returned_frame);
+                u4 low = remove_from_stack(returned_frame);
+                add_to_stack(frame, low);
+                add_to_stack(frame, high);
+            } else {
+                u4 ret_val = remove_from_stack(returned_frame);
+                add_to_stack(frame, ret_val);
+            }
+        }
+        free_frame(returned_frame);
     }
-    
     free(resolved);
     return 0;
 }
 
 int invokeinterface(Frame* frame, Instruction instruction) {
     u2 interface_methodref_index = (instruction.operands[0] << 8) | instruction.operands[1];
-    //u1 count = instruction.operands[2]; 
-    //u1 zero = instruction.operands[3]; 
-    
     // Resolve o método da interface
     ResolvedMethod* resolved = resolve_interface_method(frame->this_class, interface_methodref_index);
     if (!resolved) {
         printf("Erro: Método de interface não encontrado\n");
         return -1;
     }
-    
-    remove_from_stack(frame);
-    
-    // Cria um novo frame para o método chamado
+    // Descobrir o descriptor do método
+    char* descriptor = get_utf8_string(resolved->class->constant_pool, resolved->method->descriptor_index);
+    int num_args = count_method_arguments(descriptor);
+    // Para métodos de instância, o 'this' também é passado (primeiro argumento)
+    int total_args = num_args + 1;
+    u4* args = malloc(sizeof(u4) * total_args);
+    for (int i = total_args - 1; i >= 0; i--) {
+        args[i] = remove_from_stack(frame);
+    }
     Frame* new_frame = create_frame(resolved->class, resolved->method);
     if (!new_frame) {
         free(resolved);
+        free(args);
         return -1;
     }
-    
-    // Empilha o novo frame
+    for (int i = 0; i < total_args; i++) {
+        new_frame->local_variables[i] = args[i];
+    }
+    free(args);
     push_frame(&frame_stack, new_frame);
-    
-    // Executa o método
     execute_method(new_frame);
-    
-    // Desempilha o frame
     Frame* returned_frame = pop_frame(&frame_stack);
     if (returned_frame) {
-        free(returned_frame);
+        char* ret_type = strchr(descriptor, ')');
+        if (ret_type && *(ret_type + 1) != 'V') {
+            ret_type++;
+            if (*ret_type == 'J' || *ret_type == 'D') {
+                u4 high = remove_from_stack(returned_frame);
+                u4 low = remove_from_stack(returned_frame);
+                add_to_stack(frame, low);
+                add_to_stack(frame, high);
+            } else {
+                u4 ret_val = remove_from_stack(returned_frame);
+                add_to_stack(frame, ret_val);
+            }
+        }
+        free_frame(returned_frame);
     }
-    
     free(resolved);
     return 0;
+} 
+
+// Função utilitária para contar argumentos a partir do descriptor
+// Exemplo de descriptor: (IDLjava/lang/String;)V
+int count_method_arguments(const char* descriptor) {
+    if (!descriptor || descriptor[0] != '(') return 0;
+    int count = 0;
+    int i = 1;
+    while (descriptor[i] && descriptor[i] != ')') {
+        switch (descriptor[i]) {
+            case 'B': // byte
+            case 'C': // char
+            case 'D': // double
+            case 'F': // float
+            case 'I': // int
+            case 'S': // short
+            case 'Z': // boolean
+                count++;
+                i++;
+                break;
+            case 'J': // long
+                count++;
+                i++;
+                break;
+            case 'L': // reference type
+                count++;
+                while (descriptor[i] && descriptor[i] != ';') i++;
+                if (descriptor[i] == ';') i++;
+                break;
+            case '[': // array
+                while (descriptor[i] == '[') i++;
+                if (descriptor[i] == 'L') {
+                    while (descriptor[i] && descriptor[i] != ';') i++;
+                    if (descriptor[i] == ';') i++;
+                } else {
+                    i++;
+                }
+                count++;
+                break;
+            default:
+                i++;
+                break;
+        }
+    }
+    return count;
+} 
+
+// Função para liberar completamente um frame
+void free_frame(Frame* frame) {
+    if (!frame) return;
+    // Libera variáveis locais
+    if (frame->local_variables) free(frame->local_variables);
+    // Libera operand stack
+    OperandStack* op = frame->stack_top;
+    while (op) {
+        OperandStack* next = op->next;
+        free(op);
+        op = next;
+    }
+    free(frame);
 } 

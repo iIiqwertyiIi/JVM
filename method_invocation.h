@@ -38,4 +38,7 @@ int invokespecial(Frame* frame, Instruction instruction);
 int invokestatic(Frame* frame, Instruction instruction);
 int invokeinterface(Frame* frame, Instruction instruction);
 
+// Função utilitária para contar argumentos de um método a partir do descriptor
+int count_method_arguments(const char* descriptor);
+
 #endif 
