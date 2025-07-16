@@ -20,8 +20,8 @@ uint32_t remove_from_stack(Frame * frame) {
 }
 
 InstructionType * get_instruction_type(u1 opcode) {
-  printf("[DEBUG] get_instruction_type: opcode=0x%02x\n", opcode);
-  if (opcode == 0xa7) printf("[DEBUG] get_instruction_type: opcode 0xa7 (goto) encontrado!\n");
+  //printf("[DEBUG] get_instruction_type: opcode=0x%02x\n", opcode);
+  //if (opcode == 0xa7) printf("[DEBUG] get_instruction_type: opcode 0xa7 (goto) encontrado!\n");
   static InstructionType instructions[] = {
     //inicio funcoes de load_store
     {0x00, 0, "nop", nop},

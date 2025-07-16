@@ -23,7 +23,7 @@ ClassFile * load_class_file(char * class_name) {
 }
 
 int run_class_file(ClassFile * class_file) {
-  printf("[DEBUG] Procurando método main em run_class_file\n");
+  //printf("[DEBUG] Procurando método main em run_class_file\n");
   char * super_name = getNestedString(class_file, class_file->super_class);
 
   if (strcmp(super_name, "java/lang/Object") != 0) {
@@ -35,21 +35,21 @@ int run_class_file(ClassFile * class_file) {
 
   method_info * main_method = get_method(class_file, "main", "([Ljava/lang/String;)V");
   if (main_method == NULL) {
-    printf("[DEBUG] main_method é NULL!\n");
+    //printf("[DEBUG] main_method é NULL!\n");
     printf("main method not found\n");
     return -1;
   }
-  printf("[DEBUG] main_method encontrado! Chamando call_method\n");
+  //printf("[DEBUG] main_method encontrado! Chamando call_method\n");
 
   int res = call_method(NULL, class_file, main_method, NULL).status;
-  printf("[DEBUG] call_method retornou, status=%d\n", res);
+  //printf("[DEBUG] call_method retornou, status=%d\n", res);
   if (res < 0) {
     printf("Erro ao executar o método main\n");
     return -1;
   }
 
-  printf("[DEBUG] Fim de run_class_file\n");
-  printf("[DEBUG] run_class_file terminou normalmente, retornando para main\n");
+  //printf("[DEBUG] Fim de run_class_file\n");
+  //printf("[DEBUG] run_class_file terminou normalmente, retornando para main\n");
   return 0;
 }
 
@@ -58,9 +58,9 @@ method_info * get_method(ClassFile * class_file, char * method_name, char * meth
     method_info * method = class_file->methods[i];
     char * name = getNestedString(class_file, method->name_index);
     char * descriptor = getNestedString(class_file, method->descriptor_index);
-    printf("[DEBUG] get_method: name=%s, descriptor=%s\n", name, descriptor);
+    //printf("[DEBUG] get_method: name=%s, descriptor=%s\n", name, descriptor);
     if (strcmp(method_name, name) == 0 && strcmp(method_descriptor, descriptor) == 0) {
-      printf("[DEBUG] get_method: método encontrado!\n");
+      //printf("[DEBUG] get_method: método encontrado!\n");
       return method;
     }
   }
@@ -89,20 +89,20 @@ MethodResponses call_method(Frame * current_frame, ClassFile * class_file, metho
   call_frame->next = current_frame;
 
   attribute_info * code_attribute = NULL;
-  printf("[DEBUG] method->attributes_count = %d\n", method->attributes_count);
+  //printf("[DEBUG] method->attributes_count = %d\n", method->attributes_count);
   for (int i = 0; i < method->attributes_count; i++) {
     attribute_info * attribute = method->attributes[i];
     char * attr_name = (char *) class_file->constant_pool[attribute->attribute_name_index - 1]->Utf8.bytes;
-    printf("[DEBUG] Atributo %d: %s\n", i, attr_name);
+    //printf("[DEBUG] Atributo %d: %s\n", i, attr_name);
     if (strcmp(attr_name, "Code") == 0){
       code_attribute = attribute;
-      printf("[DEBUG] Encontrou atributo Code!\n");
+      //printf("[DEBUG] Encontrou atributo Code!\n");
       break;
     }
   }
 
   if (code_attribute == NULL) {
-    printf("[DEBUG] Code attribute not found\n");
+    //printf("[DEBUG] Code attribute not found\n");
     res.status = -2;
     return res;
   }
@@ -121,9 +121,9 @@ MethodResponses call_method(Frame * current_frame, ClassFile * class_file, metho
   call_frame->pc.position = 0;
   call_frame->pc.buffer = code_attribute->Code.code;
   for (; call_frame->pc.position < code_attribute->Code.code_length;) {
-    printf("[DEBUG] Antes de ler instrução: pc.position=%lu\n", (unsigned long)call_frame->pc.position);
+    //printf("[DEBUG] Antes de ler instrução: pc.position=%lu\n", (unsigned long)call_frame->pc.position);
     Instruction instruction = read_instruction_buffer(&call_frame->pc);
-    printf("[DEBUG] Depois de ler instrução: pc.position=%lu\n", (unsigned long)call_frame->pc.position);
+    //printf("[DEBUG] Depois de ler instrução: pc.position=%lu\n", (unsigned long)call_frame->pc.position);
     if (!instruction.type || !instruction.type->opcode_function) {
       // Mostra o opcode e a posição do erro
       printf("[ERRO] Opcode inválido: 0x%02x na posição %lu\n", 
@@ -134,12 +134,12 @@ MethodResponses call_method(Frame * current_frame, ClassFile * class_file, metho
     }
     int result = instruction.type->opcode_function(call_frame, instruction);
     if (result != 0) {
-      printf("[DEBUG] call_method: retorno especial result=%d\n", result);
+      //printf("[DEBUG] call_method: retorno especial result=%d\n", result);
       // deal with responses
       if (result == 1) {
         res.value = (uint32_t) 0;
       } else if (result == 2 && call_frame != NULL) {
-        printf("[DEBUG] call_method: tentando acessar pilha do call_frame=%p\n", (void*)call_frame);
+        //printf("[DEBUG] call_method: tentando acessar pilha do call_frame=%p\n", (void*)call_frame);
         res.value = remove_from_stack(call_frame);
       } else if (result == 3) {
         res.status = 1;
@@ -160,7 +160,7 @@ MethodResponses call_method(Frame * current_frame, ClassFile * class_file, metho
   }
   free(call_frame->local_variables);
 
-  printf("[DEBUG] call_method: retornando status=%d, value=%u\n", res.status, res.value);
+  //printf("[DEBUG] call_method: retornando status=%d, value=%u\n", res.status, res.value);
   return res;
 }
 

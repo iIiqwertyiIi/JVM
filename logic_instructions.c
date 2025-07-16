@@ -68,7 +68,7 @@ int ifnonnull(Frame * frame, Instruction instruction) {
 }
 
 int goto_(Frame * frame, Instruction instruction) {
-  printf("[DEBUG] Entrou no handler GOTO\n");
+  //printf("[DEBUG] Entrou no handler GOTO\n");
   int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
   frame->pc.position += offset - 3;
   return 0;
