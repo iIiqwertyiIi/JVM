@@ -1,5 +1,12 @@
 #include "logic_instructions.h"
-
+/**
+ * @file logic_instructions.c
+ * @brief implementacao das instrucoes logicas da JVM
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em logic_instructions.h
+ * 
+ * @see logic_instructions.h
+ */
 
 int iand(Frame * frame, Instruction instruction) {
   uint32_t value2 = remove_from_stack(frame);

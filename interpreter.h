@@ -1,3 +1,10 @@
+/**
+ * @file interpreter.h
+ * @brief arquivo cabecalho das instrucoes para implementacao da JVM como interpretador
+ * @author Nicolas Paulin
+ * @see interpreter.c
+ */
+
 #ifndef INTERPRETER_H
 #define INTERPRETER_H
 #include "types.h"

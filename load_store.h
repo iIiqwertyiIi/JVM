@@ -1,3 +1,10 @@
+/**
+ * @file load_store.h
+ * @brief arquivo cabecalho das instrucoes de load e store da JVM
+ * @author Nicolas Paulin
+ * @see load_store.c
+ */
+
 #ifndef LOAD_STORE_H
 #define LOAD_STORE_H
 

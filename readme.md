@@ -41,3 +41,38 @@ Responsável pela leitura dos arquivos *.class*.
 
 `types.c`
 Define toda a tipagem e interface da JVM. Através desse arquivo, é possível visualizar e interagir com todo o projeto.
+
+### O que cada membro fez
+#### Ana Paula Nobrega - 190142120
+- configuração makeFile
+- instruções lógicas
+- instruções leitura e desalocação de memória dos field_info
+- slides apresentações
+
+#### Eduardo Volpi - 190134330
+- instruções de chamada de metodo (invoke)
+- instruções de conversão de tipos
+- instruções leitura e desalocação de memória para attribute_info
+
+#### Gabriel Cruz - 200049038
+- instruções leitura e desalocação de memória para method-info
+- instruções auxiliares conversão de tipos signed para unsiged
+- correção bugs e warnings de compilação
+- documentação do código usando Doxygen
+- distribuição das tarefas e organização do projeto
+
+#### Tiago Buson - 200034162
+- instruções de aritmética
+- instruções tableswitch
+- instruções lookupswitch
+
+#### Nicolas Paulin - 200025627
+- Estruturação geral dos tipos do projeto e arquitetura
+- implementação adição e remoção pilha de frames
+- implementação dicionário de instruções
+- instrução de array e objetos da JVM
+- instruções de de load e store
+- instruções de return
+- interpretador
+- leitor de arquivo .class
+

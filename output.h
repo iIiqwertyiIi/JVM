@@ -1,3 +1,10 @@
+/**
+ * @file types.h
+ * @brief arquivo com funcoes de impressao para jvm no modo leitor-exibido
+ * @details impressao baseada na estrutura do JClassLib para visualização dos dados
+ * @see output.c
+ */
+
 #ifndef OUTPUT_H
 #define OUTPUT_H
 

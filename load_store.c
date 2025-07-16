@@ -1,3 +1,12 @@
+/**
+ * @file load_store.c
+ * @brief implementacao das instrucoes de load e store da JVM
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em load_store.h
+ * 
+ * @see load_store.h
+ */
+
 #include "load_store.h"
 
 int aconst_null(Frame * frame, Instruction instruction) {

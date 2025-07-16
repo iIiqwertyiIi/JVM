@@ -1,3 +1,10 @@
+/**
+ * @file types.h
+ * @brief arquivo com a tipagem dos tipos básicos aos estruturados da JVM
+ * @details através deste arquivo, é possível visualizar toda arquitetura do projeto e como ele foi desenvolvido
+ * @author Nicolas Paulin
+ */
+
 #ifndef TYPES_H
 #define TYPES_H
 #include <stdint.h>

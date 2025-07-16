@@ -1,3 +1,13 @@
+/**
+ * @file output.c
+ * @brief implementacao das funcoes de impressao para jvm no modo leitor-exibido
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em output.h
+ * 
+ * @see output.h
+ */
+
+
 #include "output.h"
 #include <stdlib.h>
 #include <stdio.h>

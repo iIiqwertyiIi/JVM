@@ -1,3 +1,11 @@
+/**
+ * @file instructions.c
+ * @brief implementacao das instrucoes de adição e remoção da pilha de frames e retorno de instrução sendo executada
+ * Esse arquivo contém a lógica das funcoes declaradas em instructions.h
+ * 
+ * @see instructions.h
+ */
+
 #include "instructions.h"
 #include "logic_instructions.h"
 #include "arithmetic_instructions.h"

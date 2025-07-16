@@ -1,3 +1,12 @@
+/**
+ * @file field_reader.c
+ * @brief implementacao de funcoes de leitura e desalocacao dos campos do ClassFile
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em field_reader.h
+ * 
+ * @see field_reader.h
+ */
+
 #include "field_reader.h"
 #include "attribute_info.h"
 #include <stdlib.h>

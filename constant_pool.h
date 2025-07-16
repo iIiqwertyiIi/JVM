@@ -30,8 +30,9 @@
  * @see read_constant_pool() implemetacao (em constant_pool.c)
  */
 cp_info ** read_constant_pool(u2 constant_pool_count);
+
 /**
- * @brief Faz leitura e aloca na memória lista de constant_pools presente
+ * @brief Desaloca memoria usada pela constant_pool lidas pela JVM
  * @param constant_pool_count quantidade de constant_pool
  * @param constant_pool ponteiro de ponteiro para primeiro item da lista de constant_pools
  * @see read_constant_pool() implemetacao (em constant_pool.c)

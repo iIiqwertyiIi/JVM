@@ -1,3 +1,13 @@
+/**
+ * @file interpreter.c
+ * @brief implementacao das instrucoes para implementacao da JVM como interpretador
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em interpreter.h
+ * 
+ * @see interpreter.h
+ */
+
+
 #include "interpreter.h"
 
 ClassFile * get_class_file(char * class_name) {

@@ -1,3 +1,10 @@
+/**
+ * @file logic_instruction.h
+ * @brief arquivo cabecalho das instrucoes logicas da JVM
+ * @author Ana Paula
+ * @see logic_instruction.c
+ */
+
 #ifndef LOGICAL_H
 #define LOGICAL_H
 
