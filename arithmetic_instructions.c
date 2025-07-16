@@ -409,3 +409,11 @@ int lushr(Frame * frame, Instruction instruction) {
 
   return 0;
 }
+
+int iinc(Frame * frame, Instruction instruction) {
+  u1 index = instruction.operands[0];
+  u1 consti = instruction.operands[1];
+  frame->local_variables[index] = int_to_u4((int32_t) u1_to_byte(consti) + u4_to_int(frame->local_variables[index]));
+
+  return 0;
+}

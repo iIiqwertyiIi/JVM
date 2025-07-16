@@ -10,7 +10,8 @@
 #include "array.h"
 #include "method_invocation.h"
 #include "table.h"
-
+#include "return.h"
+#include "wide.h"
 
 int nop(Frame * frame, Instruction instruction);
 

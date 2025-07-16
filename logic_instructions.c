@@ -23,8 +23,10 @@ int jsr(Frame * frame, Instruction instruction) {
   uint32_t return_address = frame->pc.position + 3; // jsr tem 3 bytes (opcode + 2 bytes de offset)
   add_to_stack(frame, int_to_u4(return_address));
   
-  int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-  return offset;
+  int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+  frame->pc.position += offset - 3;
+
+  return 0;
 }
 
 int jsr_w(Frame * frame, Instruction instruction) {
@@ -32,11 +34,13 @@ int jsr_w(Frame * frame, Instruction instruction) {
   add_to_stack(frame, int_to_u4(return_address));
   
   // Jump para o offset especificado (4 bytes)
-  int32_t offset = (int32_t)((instruction.operands[0] << 24) | 
+  int32_t offset = u4_to_int((u4)((instruction.operands[0] << 24) | 
                              (instruction.operands[1] << 16) | 
                              (instruction.operands[2] << 8) | 
-                             instruction.operands[3]);
-  return offset;
+                             instruction.operands[3]));
+  frame->pc.position += offset - 5;
+
+  return 0;
 }
 
 int ifnull(Frame * frame, Instruction instruction) {
@@ -44,8 +48,8 @@ int ifnull(Frame * frame, Instruction instruction) {
   
   if (value == 0) { // null é representado como 0
     // Constrói offset signed de 16 bits a partir dos bytes
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0; // Continua execução normal
@@ -56,24 +60,24 @@ int ifnonnull(Frame * frame, Instruction instruction) {
   
   if (value != 0) { // não é null
     // Constrói offset signed de 16 bits a partir dos bytes
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0; // Continua execução normal
 }
 
 int goto_(Frame * frame, Instruction instruction) {
-  int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-  return offset;
+  int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+  frame->pc.position += offset - 3;
 }
 
 int ifeq(Frame * frame, Instruction instruction) {
   uint32_t value = remove_from_stack(frame);
   
   if (u4_to_int(value) == 0) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -81,11 +85,13 @@ int ifeq(Frame * frame, Instruction instruction) {
 
 int goto_w(Frame * frame, Instruction instruction) {
   // Jump incondicional com offset de 4 bytes
-  int32_t offset = (int32_t)((instruction.operands[0] << 24) | 
+  int32_t offset = u4_to_int((u4)((instruction.operands[0] << 24) | 
                              (instruction.operands[1] << 16) | 
                              (instruction.operands[2] << 8) | 
-                             instruction.operands[3]);
-  return offset;
+                             instruction.operands[3]));
+  frame->pc.position += offset - 5;
+
+  return 0;
 }
 
 
@@ -173,8 +179,8 @@ int if_icmpeq(Frame * frame, Instruction instruction) {
   uint32_t value1 = remove_from_stack(frame);
   
   if (u4_to_int(value1) == u4_to_int(value2)) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -185,8 +191,8 @@ int if_icmpgt(Frame * frame, Instruction instruction) {
   uint32_t value1 = remove_from_stack(frame);
   
   if (u4_to_int(value1) > u4_to_int(value2)) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -197,8 +203,8 @@ int if_icmpge(Frame * frame, Instruction instruction) {
   uint32_t value1 = remove_from_stack(frame);
   
   if (u4_to_int(value1) >= u4_to_int(value2)) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -209,8 +215,8 @@ int if_icmplt(Frame * frame, Instruction instruction) {
   uint32_t value1 = remove_from_stack(frame);
   
   if (u4_to_int(value1) < u4_to_int(value2)) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -221,8 +227,8 @@ int if_icmple(Frame * frame, Instruction instruction) {
   uint32_t value1 = remove_from_stack(frame);
   
   if (u4_to_int(value1) <= u4_to_int(value2)) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -233,8 +239,8 @@ int if_icmpne(Frame * frame, Instruction instruction) {
   uint32_t value1 = remove_from_stack(frame);
   
   if (u4_to_int(value1) != u4_to_int(value2)) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -245,8 +251,8 @@ int if_acmpeq(Frame * frame, Instruction instruction) {
   uint32_t ref1 = remove_from_stack(frame);
   
   if (ref1 == ref2) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -257,8 +263,8 @@ int if_acmpne(Frame * frame, Instruction instruction) {
   uint32_t ref1 = remove_from_stack(frame);
   
   if (ref1 != ref2) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -269,8 +275,8 @@ int ifne(Frame * frame, Instruction instruction) {
   uint32_t value = remove_from_stack(frame);
   
   if (u4_to_int(value) != 0) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -280,8 +286,8 @@ int ifgt(Frame * frame, Instruction instruction) {
   uint32_t value = remove_from_stack(frame);
   
   if (u4_to_int(value) > 0) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -291,8 +297,8 @@ int ifge(Frame * frame, Instruction instruction) {
   uint32_t value = remove_from_stack(frame);
   
   if (u4_to_int(value) >= 0) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -302,8 +308,8 @@ int iflt(Frame * frame, Instruction instruction) {
   uint32_t value = remove_from_stack(frame);
   
   if (u4_to_int(value) < 0) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
@@ -313,8 +319,8 @@ int ifle(Frame * frame, Instruction instruction) {
   uint32_t value = remove_from_stack(frame);
   
   if (u4_to_int(value) <= 0) {
-    int16_t offset = (int16_t)((instruction.operands[0] << 8) | instruction.operands[1]);
-    return offset;
+    int16_t offset = u2_to_short((u2)((instruction.operands[0] << 8) | instruction.operands[1]));
+    frame->pc.position += offset - 3;
   }
   
   return 0;
