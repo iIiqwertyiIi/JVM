@@ -179,11 +179,59 @@ Frame* pop_frame(FrameStack* frame_stack) {
 // Função para executar um método (simplificada)
 void execute_method(Frame* frame) {
     if (!frame || !frame->pc.buffer) return;
-    
-    // Aqui você implementaria o loop principal de execução
-    // Por enquanto, apenas um placeholder
-    printf("Executando método: %s\n", 
-           get_utf8_string(frame->this_class->constant_pool, frame->this_method->name_index));
+
+    u1* code = frame->pc.buffer;
+    // Descobrir o tamanho do código (procurar atributo Code)
+    u4 code_length = 0;
+    for (u2 i = 0; i < frame->this_method->attributes_count; i++) {
+        attribute_info* attr = frame->this_method->attributes[i];
+        // O nome do atributo já foi resolvido em create_frame, mas aqui repetimos para garantir
+        // (ideal: guardar ponteiro para o atributo Code em create_frame)
+        char* attr_name = get_utf8_string(frame->this_class->constant_pool, attr->attribute_name_index);
+        if (attr_name && strcmp(attr_name, "Code") == 0) {
+            code_length = attr->Code.code_length;
+            break;
+        }
+    }
+
+    while (frame->pc.position < code_length) {
+        u1 opcode = code[frame->pc.position];
+        InstructionType* type = get_instruction_type(opcode);
+        if (!type || !type->opcode_function) {
+            printf("Opcode 0x%02x não implementado\n", opcode);
+            frame->pc.position++;
+            continue;
+        }
+
+        // Ler operandos
+        u1* operands = NULL;
+        if (type->operand_count > 0) {
+            operands = malloc(type->operand_count);
+            for (u1 i = 0; i < type->operand_count; i++) {
+                operands[i] = code[frame->pc.position + 1 + i];
+            }
+        }
+        Instruction instruction = { type, operands };
+
+        // Executa a instrução
+        int result = type->opcode_function(frame, instruction);
+
+        // Atualiza o PC
+        if (type->operand_count > 0) {
+            frame->pc.position += 1 + type->operand_count;
+        } else {
+            frame->pc.position += 1;
+        }
+
+        // Libera operandos
+        if (operands) free(operands);
+
+        // Se for uma instrução de retorno, sai do loop
+        if (opcode == 0xac || opcode == 0xad || opcode == 0xae || opcode == 0xaf || opcode == 0xb0 || opcode == 0xb1) {
+            // ireturn, lreturn, freturn, dreturn, areturn, return
+            break;
+        }
+    }
 }
 
 // Implementação das instruções invoke
