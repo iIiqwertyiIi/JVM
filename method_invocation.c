@@ -284,6 +284,28 @@ int invokevirtual(Frame* frame, Instruction instruction) {
     }
     free(resolved_decl);
 
+    // --- TRATAMENTO ESPECIAL PARA PRINTLN/PRINT ---
+    char* class_name = get_class_name(resolved->class->constant_pool, resolved->class->this_class);
+    char* method_name = get_utf8_string(resolved->class->constant_pool, resolved->method->name_index);
+    char* method_descriptor = get_utf8_string(resolved->class->constant_pool, resolved->method->descriptor_index);
+    // Print de depuração para ver se chegou aqui
+    printf("[DEBUG] invokevirtual: class=%s, method=%s, desc=%s\n", class_name, method_name, method_descriptor);
+    if (strcmp(class_name, "java/io/PrintStream") == 0 && (strcmp(method_name, "println") == 0 || strcmp(method_name, "print") == 0)) {
+        printf("[DEBUG] Tratamento especial de PrintStream.%s chamado!\n", method_name);
+        // Descobre o tipo do argumento
+        if (strcmp(method_descriptor, "(I)V") == 0) {
+            u4 value = remove_from_stack(frame);
+            printf("[DEBUG] Valor a ser impresso (int): %d\n", (int)value);
+            printf("%d", (int)value);
+            if (strcmp(method_name, "println") == 0) printf("\n");
+            return 0;
+        }
+        // Outros tipos podem ser adicionados aqui
+        printf("[DEBUG] Descriptor não suportado: %s\n", method_descriptor);
+        return 0;
+    }
+    // --- FIM DO TRATAMENTO ESPECIAL ---
+
     // Agora segue igual ao anterior: remove argumentos e this, cria frame, etc.
     u4* args = malloc(sizeof(u4) * total_args);
     for (int i = total_args - 1; i >= 0; i--) {
