@@ -121,8 +121,14 @@ MethodResponses call_method(Frame * current_frame, ClassFile * class_file, metho
   call_frame->pc.position = 0;
   call_frame->pc.buffer = code_attribute->Code.code;
   for (; call_frame->pc.position < code_attribute->Code.code_length;) {
+    printf("[DEBUG] Antes de ler instrução: pc.position=%lu\n", (unsigned long)call_frame->pc.position);
     Instruction instruction = read_instruction_buffer(&call_frame->pc);
+    printf("[DEBUG] Depois de ler instrução: pc.position=%lu\n", (unsigned long)call_frame->pc.position);
     if (!instruction.type || !instruction.type->opcode_function) {
+      // Mostra o opcode e a posição do erro
+      printf("[ERRO] Opcode inválido: 0x%02x na posição %lu\n", 
+        call_frame->pc.buffer[call_frame->pc.position], 
+        (unsigned long)call_frame->pc.position);
       printf("[ERRO] Instrução inválida ou não implementada! Encerrando execução do método.\n");
       break;
     }
