@@ -1,5 +1,12 @@
 #include "helper.h"
-
+/**
+ * @file helper.c
+ * @brief implementacao de funcoes convertoras entre signed e unsigned
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em helper.h
+ * 
+ * @see helper.h
+ */
 
 union ConverterU1Byte converterU1Byte;
 union ConverterU2Short converterU2Short;

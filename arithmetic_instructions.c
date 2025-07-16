@@ -1,3 +1,12 @@
+/**
+ * @file arithmetic_instructions.c
+ * @brief implementacao das instrucoes aritmeticas basicas da jvm
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em arithmetic_instructions.h
+ * 
+ * @see arithmetic_instructions.h
+ */
+
 #include "arithmetic_instructions.h"
 
 int iadd(Frame * frame, Instruction instruction) {

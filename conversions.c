@@ -1,3 +1,12 @@
+/**
+ * @file conversions.c
+ * @brief implementacao de funcoes convertoras entre tipos com sinal dos frames na pilha de frame
+ * 
+ * Esse arquivo contém a lógica das funcoes declaradas em conversions.h
+ * 
+ * @see conversions.h
+ */
+
 #include "types.h"
 #include "helper.h"
 #include <stdlib.h>
